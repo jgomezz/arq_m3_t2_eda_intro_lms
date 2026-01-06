@@ -1,7 +1,6 @@
 
 ### Create a New Course
 
-
 POST : http://localhost:8080/api/courses
 
 ```
@@ -11,3 +10,8 @@ POST : http://localhost:8080/api/courses
 "instructor": "John Doe"
 }
 ```
+### Publish a Course
+
+PUT : http://localhost:8080/api/courses/1/publish?price=10
+
+
