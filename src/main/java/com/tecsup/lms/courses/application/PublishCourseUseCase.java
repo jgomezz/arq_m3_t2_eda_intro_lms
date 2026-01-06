@@ -1,44 +1,40 @@
 package com.tecsup.lms.courses.application;
 
-
-import com.tecsup.lms.courses.domain.event.CourseCreatedEvent;
+import com.tecsup.lms.courses.domain.event.CoursePublishedEvent;
 import com.tecsup.lms.courses.domain.model.Course;
 import com.tecsup.lms.courses.domain.repository.CourseRepository;
 import com.tecsup.lms.shared.domain.event.EventPublisher;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class CourseUseCase {
+public class PublishCourseUseCase {
 
     private final CourseRepository repository;
 
     private final EventPublisher eventPublisher;
 
-    public Course createCourse(String title, String description, String instructor) {
+    @Transactional
+    public Course publishCourse(Long courseId, double price) {
 
-        Course course = Course.builder()
-                .title(title)
-                .description(description)
-                .instructor(instructor)
-                .status(Course.CourseStatus.DRAFT)
-                .createdAt(LocalDateTime.now())
-                .build();
+        Course course = repository.findById(courseId)
+                .orElseThrow(() -> new RuntimeException("Course not found"));
 
+        course.setStatus(Course.CourseStatus.PUBLISHED);
         Course saved = repository.save(course);
-        log.info("Course created: {}", saved.getId());
+
+        log.info("Course published: {}", saved.getId());
 
         // Publicar el evento
         eventPublisher.publish(
-                new CourseCreatedEvent(
+                new CoursePublishedEvent(
                         saved.getId().toString(),
                         saved.getTitle(),
-                        saved.getInstructor()
+                        price
                 )
         );
 

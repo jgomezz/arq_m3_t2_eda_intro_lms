@@ -6,6 +6,8 @@ import com.tecsup.lms.courses.infrastructure.persistence.repository.JpaCourseRep
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 @Component
 @RequiredArgsConstructor
 public class CourseRepositoryAdapter implements CourseRepository {
@@ -15,5 +17,10 @@ public class CourseRepositoryAdapter implements CourseRepository {
     @Override
     public Course save(Course course) {
         return jpaRepository.save(course);
+    }
+
+    @Override
+    public Optional<Course> findById(Long id) {
+        return jpaRepository.findById(id);
     }
 }
