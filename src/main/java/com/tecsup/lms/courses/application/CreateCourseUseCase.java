@@ -7,12 +7,10 @@ import com.tecsup.lms.courses.domain.repository.CourseRepository;
 import com.tecsup.lms.shared.domain.event.EventPublisher;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
 @Slf4j
-@Service
 @RequiredArgsConstructor
 public class CreateCourseUseCase {
 
