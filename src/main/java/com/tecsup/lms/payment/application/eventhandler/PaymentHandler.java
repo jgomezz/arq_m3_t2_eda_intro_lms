@@ -43,6 +43,9 @@ public class PaymentHandler {
     @Recover
     public void recover(RuntimeException e, CoursePublishedEvent event) {
         log.error("All retries exhausted for payment processing of course: {}", event.getCourseId());
+
+        // Store in Dead Letter Queue or take alternative action
+        // TODO: Implement DLQ logic here
     }
 
 }
