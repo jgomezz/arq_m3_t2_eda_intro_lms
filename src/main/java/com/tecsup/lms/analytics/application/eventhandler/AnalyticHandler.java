@@ -1,4 +1,4 @@
-package com.tecsup.lms.notifications.application.eventhandler;
+package com.tecsup.lms.analytics.application.eventhandler;
 
 import com.tecsup.lms.courses.domain.event.CoursePublishedEvent;
 import lombok.extern.slf4j.Slf4j;
@@ -8,14 +8,14 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class NotificationHandler {
+public class AnalyticHandler {
 
     @Async("eventExecutor") // No generara bloqueos
     @EventListener
     public void handleCoursePublished(CoursePublishedEvent event) throws InterruptedException {
-        log.info("[{}] Sending notifications...", Thread.currentThread().getName());
+        log.info("[{}] Doing analytics ....", Thread.currentThread().getName());
         Thread.sleep(4000);
-        log.info("Email sent for course: {}", event.getTitle());
+        log.info("Finished analytics : {}", event.getTitle());
 
     }
 }

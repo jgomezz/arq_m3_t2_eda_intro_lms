@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class ArqM3T2EdaIntroLmsApplication {
+public class Intro_EDA_LmsApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ArqM3T2EdaIntroLmsApplication.class, args);
+		SpringApplication.run(Intro_EDA_LmsApplication.class, args);
 	}
 
 }
