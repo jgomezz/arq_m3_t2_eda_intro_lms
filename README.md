@@ -18,7 +18,7 @@ PUT : http://localhost:8080/api/courses/1/publish?price=10
 
 ## II - Ejercicios
 
-### Crear Eventos y Handlers para los siguientes casos de uso:
+### Crear Eventos y Handlers para los siguientes casos:
 
 #### StudentEnrolledEvent
 - Handler: Enviar email de bienvenida
