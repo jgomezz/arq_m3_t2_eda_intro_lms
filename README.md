@@ -30,4 +30,6 @@ PUT : http://localhost:8080/api/courses/1/publish?price=10
 - Handler: Enviar notificación de logro
 - Handler: Verificar si completó el curso
 
+## III - Retry en PaymentHandler
+
 

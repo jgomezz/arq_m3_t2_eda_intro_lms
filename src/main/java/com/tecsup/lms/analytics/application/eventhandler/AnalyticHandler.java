@@ -14,7 +14,7 @@ public class AnalyticHandler {
     @EventListener
     public void handleCoursePublished(CoursePublishedEvent event) throws InterruptedException {
         log.info("[{}] Doing analytics ....", Thread.currentThread().getName());
-        Thread.sleep(4000);
+        Thread.sleep(1000);
         log.info("Finished analytics : {}", event.getTitle());
 
     }

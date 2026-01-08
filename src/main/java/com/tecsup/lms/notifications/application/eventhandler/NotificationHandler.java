@@ -14,7 +14,7 @@ public class NotificationHandler {
     @EventListener
     public void handleCoursePublished(CoursePublishedEvent event) throws InterruptedException {
         log.info("[{}] Sending notifications...", Thread.currentThread().getName());
-        Thread.sleep(4000);
+        Thread.sleep(1000);
         log.info("Email sent for course: {}", event.getTitle());
 
     }
