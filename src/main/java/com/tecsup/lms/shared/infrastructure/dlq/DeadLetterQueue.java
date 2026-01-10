@@ -4,6 +4,8 @@ import com.tecsup.lms.shared.domain.event.DomainEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Slf4j
@@ -26,4 +28,8 @@ public class DeadLetterQueue {
 
     }
 
+    public List<FailedEvent> getFailedEvents() {
+
+        return new ArrayList<>(failedEvents);
+    }
 }

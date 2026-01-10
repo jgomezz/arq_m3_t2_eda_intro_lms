@@ -119,7 +119,7 @@ Para agregar la funcionalidad de reintentos en el `PaymentHandler`, sigue estos 
 
 ## IV - Dead Letter Queue (DLQ)
 
-<img src="images/dlq_sequence_diagram.png" alt="DeadLetterQueue" width="300"/>
+<img src="images/dlq_sequence_diagram.png" alt="DeadLetterQueue" width="500"/>
 
 Para implementar una Dead Letter Queue (DLQ) simple en memoria, puedes seguir estos pasos:
  
@@ -198,3 +198,9 @@ Para implementar una Dead Letter Queue (DLQ) simple en memoria, puedes seguir es
    ```
 4.- Probar la funcionalidad de la DLQ
    - Publicar un curso varias veces para observar que los eventos fallidos se almacenan en la DLQ después de agotar los reintentos.
+
+### Ejercicio : Usar el DLQ para :
+- Notification --> NotificationHandler
+
+## V - Visualizar los eventos en la DLQ
+Para visualizar los eventos almacenados en la Dead Letter Queue (DLQ), puedes crear un endpoint
