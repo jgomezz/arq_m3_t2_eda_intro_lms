@@ -148,7 +148,7 @@ Para implementar una Dead Letter Queue (DLQ) simple en memoria, puedes seguir es
     @Component
     public class DeadLetterQueue {
     
-        // Colección para almacenar eventos fallidos
+        // Coleccion para almacenar eventos fallidos
         private final ConcurrentLinkedQueue<FailedEvent> failedEvents = new ConcurrentLinkedQueue<>();
     
         // Método para agregar un evento fallido a la DLQ
@@ -174,7 +174,7 @@ Para implementar una Dead Letter Queue (DLQ) simple en memoria, puedes seguir es
    ```java
     @Slf4j
     @Component
-    @RequiredArgsConstructor
+    @RequiredArgsConstructor  // Agregar constructor para inyección de dependencias
     public class PaymentHandler {
     
         ......
