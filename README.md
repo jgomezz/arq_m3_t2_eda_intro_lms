@@ -120,9 +120,9 @@ Para agregar la funcionalidad de reintentos en el `PaymentHandler`, sigue estos 
 ## IV - Dead Letter Queue (DLQ)
 Para implementar una Dead Letter Queue (DLQ) simple en memoria, puedes seguir estos pasos:
 
-1.- Crear una clase FailedEvent para representar los eventos fallidos : FailedEvent.java
+1. Crear una clase FailedEvent para representar los eventos fallidos : FailedEvent.java
 
-    <img src="images/dlq_path_queue_class.png" alt="DeadLetterQueue" width="300"/>
+    <img src="images/dlq_path_queue_class.png" alt="PaymentHandler" width="300"/>
 
    ```java
     import com.banco.shared.domain.event.DomainEvent;
@@ -140,7 +140,7 @@ Para implementar una Dead Letter Queue (DLQ) simple en memoria, puedes seguir es
     }
    ```
 
-2.- Crear una clase DLQ para almacenar los eventos fallidos : DeadLetterQueue.java
+2. Crear una clase DLQ para almacenar los eventos fallidos : DeadLetterQueue.java
 
 
    ```java
@@ -169,7 +169,7 @@ Para implementar una Dead Letter Queue (DLQ) simple en memoria, puedes seguir es
     }
    ```
 
-3.- Agregar lógica para almacenar eventos fallidos en la DLQ dentro del PaymentHandler : PaymentHandler.java
+3. Agregar lógica para almacenar eventos fallidos en la DLQ dentro del PaymentHandler : PaymentHandler.java
 
    ```java
     @Slf4j
