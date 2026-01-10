@@ -117,4 +117,81 @@ Para agregar la funcionalidad de reintentos en el `PaymentHandler`, sigue estos 
 - StudentEnrolledEvent --> Handler: Enviar email de bienvenida ( 2 intentos)
 
 
+## IV - Dead Letter Queue (DLQ)
+Para implementar una Dead Letter Queue (DLQ) simple en memoria, puedes seguir estos pasos:
 
+1.- Crear una clase FailedEvent para representar los eventos fallidos : FailedEvent.java
+
+    <img src="images/dlq_path_queue_class.png" alt="DeadLetterQueue" width="300"/>
+
+   ```java
+    import com.banco.shared.domain.event.DomainEvent;
+    import lombok.AllArgsConstructor;
+    import lombok.Getter;
+
+    @Getter
+    @AllArgsConstructor
+    public class FailedEvent {
+    
+        private final DomainEvent event;      // Evento que falló
+        private final String reason;          // Mensaje de error asociado
+        private final long timestamp;         // Marca de tiempo del fallo
+    
+    }
+   ```
+
+2.- Crear una clase DLQ para almacenar los eventos fallidos : DeadLetterQueue.java
+
+
+   ```java
+    @Slf4j
+    @Component
+    public class DeadLetterQueue {
+    
+        // Colección para almacenar eventos fallidos
+        private final ConcurrentLinkedQueue<FailedEvent> failedEvents = new ConcurrentLinkedQueue<>();
+    
+        // Método para agregar un evento fallido a la DLQ
+        public void add(DomainEvent event, Exception exception) {
+    
+            // Crear un objeto FailedEvent con detalles del evento fallido
+            FailedEvent failedEvent = new FailedEvent(
+                    event,
+                    exception.getMessage(),
+                    System.currentTimeMillis()
+            );
+    
+            // Agregar el evento fallido a la cola
+            failedEvents.add(failedEvent);
+    
+        }
+    
+    }
+   ```
+
+3.- Agregar lógica para almacenar eventos fallidos en la DLQ dentro del PaymentHandler : PaymentHandler.java
+
+   ```java
+    @Slf4j
+    @Component
+    @RequiredArgsConstructor
+    public class PaymentHandler {
+    
+        ......
+        private final DeadLetterQueue dlq;  // Inyectar la DLQ
+    
+        .....
+    
+    
+        @Recover  // Manejo cuando se agotan los reintentos
+        public void recover(RuntimeException e, CoursePublishedEvent event) {
+            
+            .....
+            
+            dlq.add(event, e);  // Agregar al final del metodo 
+        }
+    
+    }
+   ```
+4.- Probar la funcionalidad de la DLQ
+   - Publicar un curso varias veces para observar que los eventos fallidos se almacenan en la DLQ después de agotar los reintentos.

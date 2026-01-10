@@ -1,6 +1,8 @@
 package com.tecsup.lms.payment.application.eventhandler;
 
 import com.tecsup.lms.courses.domain.event.CoursePublishedEvent;
+import com.tecsup.lms.shared.infrastructure.dlq.DeadLetterQueue;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.retry.annotation.Backoff;
@@ -13,9 +15,12 @@ import java.util.Random;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class PaymentHandler {
 
     private final Random random = new Random();
+
+    private final DeadLetterQueue dlq;
 
     @Async("eventExecutor") // No generara bloqueos
     @EventListener
@@ -41,6 +46,8 @@ public class PaymentHandler {
 
         // Store in Dead Letter Queue or take alternative action
         // TODO: Implement DLQ logic here
+        dlq.add(event, e);
+
     }
 
 }
