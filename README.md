@@ -31,6 +31,86 @@ PUT : http://localhost:8080/api/courses/1/publish?price=10
 - Handler: Verificar si completó el curso
 
 ## III - Retry en PaymentHandler
+Para agregar la funcionalidad de reintentos en el `PaymentHandler`, sigue estos pasos:
+
+1. Agregar Dependencia en el pom.xml 
+
+   ```xml
+        <!-- Spring Retry -->
+        <dependency>
+            <groupId>org.springframework.retry</groupId>
+            <artifactId>spring-retry</artifactId>
+            <version>2.0.4</version>  <!-- La versión es importante considerarla -->
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aspects</artifactId>
+        </dependency>
+   ```
+2. Crear el Config Class para habilitar Spring Retry : RetryConfig.java
+
+    <img src="images/retry_path_config_class.png" alt="RetryConfig" width="300"/>
+
+   ```java
+   
+   import org.springframework.context.annotation.Configuration;
+   import org.springframework.retry.annotation.EnableRetry;
+
+   @Configuration
+   @EnableRetry  // Habilita la funcionalidad de reintentos
+   public class RetryConfig {
+   }
+   
+   ```
+3. Modificar el PaymentHandler para agregar la anotación @Retryable
+
+    <img src="images/retry_path_payment_handler.png" alt="PaymentHandler" width="300"/>
+
+
+   ```java
+    
+    @Slf4j
+    @Component
+    public class PaymentHandler {
+    
+        private final Random random = new Random();
+    
+        @Async("eventExecutor") // No generara bloqueos
+        @EventListener
+        // Agrega la anotación @Retryable para reintentos
+        @Retryable(
+                maxAttempts = 2,  // cantidad de intentos
+                backoff = @Backoff(delay = 1000, /* milisegundos */
+                        multiplier = 2 /* tiempo de espera entre intentos */)
+        )
+        public void handleCoursePublished(CoursePublishedEvent event) throws InterruptedException {
+            log.info("[{}] Processing payment ...", Thread.currentThread().getName());
+    
+            if (random.nextBoolean()) {
+                log.info("Payment processing taking longer than expected...");
+                throw new RuntimeException("Payment processing failed due to timeout");
+            }
+    
+            log.info("Payment finished for course: {}", event.getTitle());
+    
+        }
+    
+        
+        @Recover  // Manejo cuando se agotan los reintentos
+        public void recover(RuntimeException e, CoursePublishedEvent event) {
+            log.error("All retries exhausted for payment processing of course: {}", event.getCourseId());
+    
+            // Store in Dead Letter Queue or take alternative action
+            // TODO: Implement DLQ logic here
+        }
+    
+    }
+
+   ```
+4. Probar la funcionalidad de reintentos
+   - Publicar un curso varias veces para observar el comportamiento de reintentos en caso de
+
+
 
 ### Ejercicio : Crear intentos de :
 - Notification --> NotificationHandler:  ( 2 intentos)
