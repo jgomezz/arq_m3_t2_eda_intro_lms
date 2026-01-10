@@ -20,7 +20,7 @@ public class PaymentHandler {
     @Async("eventExecutor") // No generara bloqueos
     @EventListener
     @Retryable(
-            maxAttempts = 3,
+            maxAttempts = 2,
             backoff = @Backoff(delay = 1000, multiplier = 2)
     )
     public void handleCoursePublished(CoursePublishedEvent event) throws InterruptedException {

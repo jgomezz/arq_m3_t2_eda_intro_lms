@@ -21,7 +21,7 @@ PUT : http://localhost:8080/api/courses/1/publish?price=10
 ### Crear Eventos y Handlers para los siguientes casos:
 
 #### StudentEnrolledEvent
-- Handler: Enviar email de bienvenida
+- Handler: Enviar email de bienvenida  
 - Handler: Actualizar estadísticas del curso
 - Handler: Crear acceso al material
 
@@ -31,5 +31,8 @@ PUT : http://localhost:8080/api/courses/1/publish?price=10
 - Handler: Verificar si completó el curso
 
 ## III - Retry en PaymentHandler
+
+### Ejercicio : Crear intentos de :
+- StudentEnrolledEvent : Enviar Email de Bienvienida 
 
 
