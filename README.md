@@ -168,6 +168,11 @@ Para implementar una Dead Letter Queue (DLQ) simple en memoria, puedes seguir es
             failedEvents.add(failedEvent);
     
         }
+
+        // Metodo para obtener todos los eventos fallidos almacenados en la DLQ
+        public List<FailedEvent> getFailedEvents() {
+            return new ArrayList<>(failedEvents);
+        }
     
     }
    ```
@@ -204,3 +209,49 @@ Para implementar una Dead Letter Queue (DLQ) simple en memoria, puedes seguir es
 
 ## V - Visualizar los eventos en la DLQ
 Para visualizar los eventos almacenados en la Dead Letter Queue (DLQ), puedes crear un endpoint
+
+<img src="images/dlq_admin.png" alt="DeadLetterQueue" width="300"/>
+
+1. Crear un DTO para representar los eventos fallidos : FailedEventResponse.java
+
+   ```java
+    import com.tecsup.lms.shared.infrastructure.dlq.FailedEvent;
+    import lombok.Data;
+    
+    import java.util.List;
+    
+    @Data
+    public class DLQResponse {
+        private List<FailedEvent> events;
+    }
+   ```
+2. Crear un controlador para exponer un endpoint que devuelva los eventos en la DLQ : DLQController.java
+
+   ```java
+    import com.tecsup.lms.admin.infrastructure.web.dto.DLQResponse;
+    import com.tecsup.lms.shared.infrastructure.dlq.DeadLetterQueue;
+    import lombok.RequiredArgsConstructor;
+    import org.springframework.http.ResponseEntity;
+    import org.springframework.web.bind.annotation.GetMapping;
+    import org.springframework.web.bind.annotation.RequestMapping;
+    import org.springframework.web.bind.annotation.RestController;
+    
+    @RestController
+    @RequestMapping("/api/admin/dlq")
+    @RequiredArgsConstructor
+    public class DLQController {
+    
+        private final DeadLetterQueue deadLetterQueue;
+    
+        @GetMapping
+        public ResponseEntity<DLQResponse>  getFailedEvents() {
+            DLQResponse response = new DLQResponse();
+            response.setEvents(deadLetterQueue.getFailedEvents());
+            return ResponseEntity.ok(response);
+        }
+    
+    }   
+   ```
+3. Probar el endpoint para visualizar los eventos en la DLQ
+   - Realizar una solicitud GET a `http://localhost:8080/api/dlq
+
