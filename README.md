@@ -33,6 +33,6 @@ PUT : http://localhost:8080/api/courses/1/publish?price=10
 ## III - Retry en PaymentHandler
 
 ### Ejercicio : Crear intentos de :
-- StudentEnrolledEvent : Enviar Email de Bienvienida 
+- StudentEnrolledEvent : Enviar Email de Bienvienida ( 2 intentos)
 
 
