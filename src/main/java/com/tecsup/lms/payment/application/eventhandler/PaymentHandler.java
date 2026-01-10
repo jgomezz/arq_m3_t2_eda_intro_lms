@@ -20,7 +20,7 @@ public class PaymentHandler {
     @Async("eventExecutor") // No generara bloqueos
     @EventListener
     @Retryable(
-            maxAttempts = 2,
+            maxAttempts = 2,  //
             backoff = @Backoff(delay = 1000, multiplier = 2)
     )
     public void handleCoursePublished(CoursePublishedEvent event) throws InterruptedException {
@@ -35,11 +35,6 @@ public class PaymentHandler {
 
     }
 
-    /**
-     * Recover method when all retries are exhausted
-     * @param e
-     * @param event
-     */
     @Recover
     public void recover(RuntimeException e, CoursePublishedEvent event) {
         log.error("All retries exhausted for payment processing of course: {}", event.getCourseId());
