@@ -10,8 +10,6 @@ Localización:
 
 <img src="images/event_sourcing_step_2.png" alt="Event Store" width="400"/>
 
-
-
 EventStore.java
 ```
 import com.tecsup.lms.shared.domain.event.DomainEvent;
@@ -132,6 +130,13 @@ public class MemoryEventStoreTest {
 2.- Crear Eventos de Enrollment
     Evento que se van a producir en el pasado
 
+Se crea en un nuevo modulo : enrollments
+
+<img src="images/event_sourcing_step_3.png" alt="Event Store" width="400"/>
+
+Localización:
+
+<img src="images/event_sourcing_step_4.png" alt="Event Store" width="400"/>
 
 
 
