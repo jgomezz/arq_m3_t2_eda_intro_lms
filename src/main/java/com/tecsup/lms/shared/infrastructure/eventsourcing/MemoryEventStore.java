@@ -1,13 +1,11 @@
 package com.tecsup.lms.shared.infrastructure.eventsourcing;
 
 import com.tecsup.lms.shared.domain.event.DomainEvent;
-import com.tecsup.lms.shared.domain.event.EventPublisher;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
