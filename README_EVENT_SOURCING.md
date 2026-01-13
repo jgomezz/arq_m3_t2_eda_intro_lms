@@ -161,9 +161,57 @@ public class StudentEnrolledEvent extends DomainEvent {
 }
 ```
 
+3.- Crear Aggregate Enrollment
 
-3.- Crear Aggregate
-    Para reconstruir los eventos
+Se crea la clase Enrollment , donde se leeara los eventos y se reconstruira el estado actual
 
+
+Localización:
+
+<img src="images/event_sourcing_step_5.png" alt="Event Store" width="400"/>
+Enrollment.java
+```
+
+import com.tecsup.lms.enrollments.domain.event.StudentEnrolledEvent;
+import com.tecsup.lms.shared.domain.event.DomainEvent;
+import lombok.Getter;
+
+import java.util.List;
+
+@Getter
+public class Enrollment {
+
+    //
+    private String id;
+    private String studentId;
+    private String studentName;
+    private String courseId;
+
+    public static Enrollment fromEvents (List<DomainEvent> events) {
+
+        Enrollment enrollment = new Enrollment();
+
+        for(DomainEvent event: events) {
+            enrollment.apply(event);
+        }
+
+        return enrollment;
+    }
+
+    private void apply(DomainEvent event) {
+        if (event instanceof StudentEnrolledEvent e) {
+            this.id = e.getEnrollmentId();
+            this.studentId = e.getStudentId();
+            this.studentName = e.getStudentName();
+            this.courseId = e.getCourseId();
+
+        } else if (event instanceof DomainEvent) {
+            // TO DO
+        }
+
+    }
+
+}
+```
 4.- Command Handler
     Procesa la solicitud de cambio y genera eventos
