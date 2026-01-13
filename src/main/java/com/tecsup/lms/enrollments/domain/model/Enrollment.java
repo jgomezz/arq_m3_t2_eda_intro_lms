@@ -16,7 +16,7 @@ import java.util.List;
 public class Enrollment {
 
     //
-    private String id;
+    private String enrollmentId;
     private String studentId;
     private String studentName;
     private String courseId;
@@ -48,7 +48,7 @@ public class Enrollment {
      */
     private void apply(DomainEvent event) {
         if (event instanceof StudentEnrolledEvent e) {
-            this.id = e.getEnrollmentId();
+            this.enrollmentId = e.getEnrollmentId();
             this.studentId = e.getStudentId();
             this.studentName = e.getStudentName();
             this.courseId = e.getCourseId();

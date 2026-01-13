@@ -26,7 +26,7 @@ public class MemoryEventStoreTest {
     private ApplicationEventPublisher publisher;
 
     @BeforeEach
-    void ini(){
+    void init(){
         publisher = mock(ApplicationEventPublisher.class);
         eventStore = new MemoryEventStore(publisher);
     }

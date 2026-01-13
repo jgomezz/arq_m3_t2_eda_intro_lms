@@ -25,7 +25,7 @@ class EnrollmentTest {
 
         Enrollment enrollment = Enrollment.fromEvents(events);
 
-        assertEquals("enroll-123", enrollment.getId());
+        assertEquals("enroll-123", enrollment.getEnrollmentId());
         assertEquals("student-01", enrollment.getStudentId());
         assertEquals("Juan", enrollment.getStudentName());
         assertEquals("course-01", enrollment.getCourseId());
@@ -57,7 +57,7 @@ class EnrollmentTest {
 
         Enrollment enrollment = Enrollment.fromEvents(events);
 
-        assertEquals("enroll-123", enrollment.getId());
+        assertEquals("enroll-123", enrollment.getEnrollmentId());
         assertEquals("student-01", enrollment.getStudentId());
         assertEquals("Juan", enrollment.getStudentName());
         assertEquals("course-01", enrollment.getCourseId());
