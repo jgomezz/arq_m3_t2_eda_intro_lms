@@ -169,9 +169,9 @@ Se crea la clase Enrollment , donde se leeara los eventos y se reconstruira el e
 Localización:
 
 <img src="images/event_sourcing_step_5.png" alt="Event Store" width="400"/>
+
 Enrollment.java
 ```
-
 import com.tecsup.lms.enrollments.domain.event.StudentEnrolledEvent;
 import com.tecsup.lms.shared.domain.event.DomainEvent;
 import lombok.Getter;
