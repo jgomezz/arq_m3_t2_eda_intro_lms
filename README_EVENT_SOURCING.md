@@ -213,5 +213,59 @@ public class Enrollment {
 
 }
 ```
+
+Agregamos otro evento : LessonCompletedEvent.java
+
+
+```
+import com.tecsup.lms.shared.domain.event.DomainEvent;
+import lombok.Getter;
+
+@Getter
+public class LessonCompletedEvent extends DomainEvent {
+
+    private final String enrollmentId;
+    private final String lessonId;
+    private final int newProgressPercentage;
+
+    public LessonCompletedEvent(String enrollmentId, String lessonId, int newProgressPercentage) {
+        super();
+        this.enrollmentId = enrollmentId;
+        this.lessonId = lessonId;
+        this.newProgressPercentage = newProgressPercentage;
+    }
+}
+
+```
+
+Hacer cambios en el Agregate Enrollment.java
+
+```
+
+... 
+@Getter
+public class Enrollment {
+
+    ...
+    private int progressPercentage; // Adicionar esta linea
+    ... 
+
+
+    private void apply(DomainEvent event) {
+        if (event instanceof StudentEnrolledEvent e) {
+            this.id = e.getEnrollmentId();
+            this.studentId = e.getStudentId();
+            this.studentName = e.getStudentName();
+            this.courseId = e.getCourseId();
+
+        } else if (event instanceof LessonCompletedEvent e) {        // CAMBIO
+            this.progressPercentage = e.getNewProgressPercentage();  // Adicionar esta linea
+        }
+
+    }
+ }
+```
+
+
 4.- Command Handler
     Procesa la solicitud de cambio y genera eventos

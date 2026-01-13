@@ -1,5 +1,6 @@
 package com.tecsup.lms.enrollments.domain.model;
 
+import com.tecsup.lms.enrollments.domain.event.LessonCompletedEvent;
 import com.tecsup.lms.enrollments.domain.event.StudentEnrolledEvent;
 import com.tecsup.lms.shared.domain.event.DomainEvent;
 import lombok.Getter;
@@ -19,6 +20,11 @@ public class Enrollment {
     private String studentId;
     private String studentName;
     private String courseId;
+    private int progressPercentage;
+
+    public Enrollment() {
+        this.progressPercentage = 0;
+    }
 
     /**
      * Construye una Enrollment a partir de una lista de eventos
@@ -46,9 +52,11 @@ public class Enrollment {
             this.studentId = e.getStudentId();
             this.studentName = e.getStudentName();
             this.courseId = e.getCourseId();
+            this.progressPercentage = 0;
 
-        } else if (event instanceof DomainEvent) {
-            // TO DO
+        } else if (event instanceof LessonCompletedEvent e) {
+            this.progressPercentage = e.getNewProgressPercentage();
+
         }
 
     }
