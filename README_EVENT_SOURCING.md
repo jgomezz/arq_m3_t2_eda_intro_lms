@@ -369,3 +369,9 @@ class EnrollmentCommandHandlerTest {
 
 }
 ```
+
+5.- Creacion del Controlador
+
+Localización:
+
+<img src="images/event_sourcing_step_7.png" alt="Event Store" />
