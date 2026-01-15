@@ -348,7 +348,8 @@ Localización:
 <img src="images/event_sourcing_step_6.png" alt="Event Store" width="400"/>
 
 EnrollStudentCommand.java
-```
+```.java
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
