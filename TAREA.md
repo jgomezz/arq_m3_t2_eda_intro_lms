@@ -9,13 +9,11 @@
 ### Requisitos Técnicos
 -  Usar Event Sourcing para manejar comentarios y ratings
 
-### Componentes a Implementar
-
-- Modulo de Comentarios 
+### Modulo a Implementar : Comentarios 
  
- -- CourseComment --> Agregate
- -- Eventos
-     -- CommentAddedEvent
-     -- CommentEditedEvent
- -- CommentCommandHandler
- -- MemoryEventStore ( ya existe en el  proyecto)
+ - CourseComment --> Agregate
+ - Eventos
+     - CommentAddedEvent
+     - CommentEditedEvent
+ - CommentCommandHandler
+ - MemoryEventStore ( ya existe en el  proyecto)
