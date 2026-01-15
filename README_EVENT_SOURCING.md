@@ -447,7 +447,7 @@ public class EnrollmentCommandHandler {
 
 EnrollmentCommandHandlerTest.java
 
-```
+```.java
 
 import com.tecsup.lms.shared.infrastructure.eventsourcing.MemoryEventStore;
 import lombok.extern.slf4j.Slf4j;
@@ -501,7 +501,8 @@ Localización:
 
 EnrollmentConfiguration.java
 
-```
+```.java
+
 import com.tecsup.lms.enrollments.application.command.EnrollmentCommandHandler;
 import com.tecsup.lms.shared.infrastructure.eventsourcing.MemoryEventStore;
 import org.springframework.context.annotation.Bean;
@@ -520,7 +521,7 @@ public class EnrollmentConfiguration {
 
 EnrollmentController.java
 
-```
+```.java
 
 import com.tecsup.lms.enrollments.application.command.EnrollStudentCommand;
 import com.tecsup.lms.enrollments.application.command.EnrollmentCommandHandler;
@@ -587,7 +588,8 @@ public class EnrollmentController {
 
 EnrollmentRequest.java
 
-```
+```.java
+
 import lombok.Data;
 
 @Data
@@ -600,7 +602,8 @@ public class EnrollmentRequest {
 
 EnrollmentResponse.java
 
-```
+```.java
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
