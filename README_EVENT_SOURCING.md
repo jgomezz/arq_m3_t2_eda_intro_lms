@@ -138,11 +138,11 @@ public class MemoryEventStoreTest {
 
 Se crea en un nuevo modulo : enrollments
 
-<img src="images/event_sourcing_step_3.png" alt="Event Store" width="400"/>
+<img src="images/event_sourcing_step_3.png" alt="Event Store" width="300"/>
 
 Localización:
 
-<img src="images/event_sourcing_step_4.png" alt="Event Store" width="400"/>
+<img src="images/event_sourcing_step_4.png" alt="Event Store" />
 
 StudentEnrolledEvent.java
 
@@ -176,7 +176,7 @@ Se crea la clase Enrollment , donde se leeara los eventos y se reconstruira el e
 
 Localización:
 
-<img src="images/event_sourcing_step_5.png" alt="Event Store" width="400"/>
+<img src="images/event_sourcing_step_5.png" alt="Event Store" />
 
 Enrollment.java
 
@@ -360,7 +360,7 @@ class EnrollmentTest {
 
 Localización:
 
-<img src="images/event_sourcing_step_6.png" alt="Event Store" width="400"/>
+<img src="images/event_sourcing_step_6.png" alt="Event Store" />
 
 EnrollStudentCommand.java
 
