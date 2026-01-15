@@ -442,7 +442,6 @@ public class EnrollmentCommandHandler {
     }
 }
 
-
 ```
 
 EnrollmentCommandHandlerTest.java
@@ -471,6 +470,7 @@ class EnrollmentCommandHandlerTest {
         eventStore = new MemoryEventStore(publisher);
         handler = new EnrollmentCommandHandler(eventStore);
     }
+    
     @Test
     void enrollStudent() {
         EnrollStudentCommand command
@@ -486,11 +486,9 @@ class EnrollmentCommandHandlerTest {
         var events = eventStore.getEvents(enrollmentId);
         assertEquals(1, events.size());
 
-
     }
-
-
 }
+
 ```
 
 5.- Creacion del Controlador
