@@ -6,9 +6,11 @@ import com.tecsup.lms.enrollments.domain.model.Enrollment;
 import com.tecsup.lms.enrollments.infrastructure.dto.EnrollmentRequest;
 import com.tecsup.lms.enrollments.infrastructure.dto.EnrollmentResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/enrollments")
 @RequiredArgsConstructor
@@ -41,6 +43,18 @@ public class EnrollmentController {
                                           @PathVariable String lessonId) {
 
         enrollmentCommandHandler.addLesson(enrollmentId, lessonId);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{enrollmentId}/progress")
+    public ResponseEntity<Void> getEnrollmentProgress(@PathVariable String enrollmentId) {
+        // Lógica para obtener el progreso de la inscripción
+
+        Enrollment enrollment = enrollmentCommandHandler.getEnrollmentProgress(enrollmentId);
+
+        log.info("Enrollment {} - Current progress: {}%",
+                enrollmentId, enrollment.getProgressPercentage());
 
         return ResponseEntity.ok().build();
     }

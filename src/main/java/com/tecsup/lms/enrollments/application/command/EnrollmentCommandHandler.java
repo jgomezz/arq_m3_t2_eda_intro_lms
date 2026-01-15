@@ -62,4 +62,15 @@ public class EnrollmentCommandHandler {
         // Almacenar el evento en el Event Store
         eventStore.save(enrollmentId, event);
     }
+
+    public Enrollment getEnrollmentProgress(String enrollmentId) {
+
+        // Obtener todos los eventos para el enrollmentId
+        var events = eventStore.getEvents(enrollmentId);
+
+        // Reconstruir el estado actual de la inscripción
+        var enrollment = Enrollment.fromEvents(events);
+
+        return enrollment;
+    }
 }
