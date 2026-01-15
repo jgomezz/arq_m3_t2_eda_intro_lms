@@ -9,7 +9,7 @@ import java.util.List;
 
 
 /**
- *  El estudiante se ha inscrito en un curso
+ *  Se encarga de representar la inscripción de un estudiante en un curso.
  *
  */
 @Getter

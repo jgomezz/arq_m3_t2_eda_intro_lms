@@ -7,10 +7,7 @@ import com.tecsup.lms.enrollments.infrastructure.dto.EnrollmentRequest;
 import com.tecsup.lms.enrollments.infrastructure.dto.EnrollmentResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/enrollments")
@@ -37,6 +34,15 @@ public class EnrollmentController {
         String enrollmentId = enrollmentCommandHandler.enrollStudent(command);
 
         return ResponseEntity.ok(new EnrollmentResponse(enrollmentId));
+    }
+
+    @PostMapping("/{enrollmentId}/lessons/{lessonId}")
+    public ResponseEntity<Void> addLesson(@PathVariable String enrollmentId,
+                                          @PathVariable String lessonId) {
+
+        enrollmentCommandHandler.addLesson(enrollmentId, lessonId);
+
+        return ResponseEntity.ok().build();
     }
 
 }
