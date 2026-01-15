@@ -215,7 +215,7 @@ public class Enrollment {
 
 Agregamos otro evento : LessonCompletedEvent.java
 
-
+LessonCompletedEvent.java
 ```
 import com.tecsup.lms.shared.domain.event.DomainEvent;
 import lombok.Getter;
@@ -239,8 +239,9 @@ public class LessonCompletedEvent extends DomainEvent {
 
 Hacer cambios en el Agregate Enrollment.java
 
-```
+Enrollment.java
 
+```
 ... 
 @Getter
 public class Enrollment {
@@ -248,7 +249,6 @@ public class Enrollment {
     ...
     private int progressPercentage; // Adicionar esta linea
     ... 
-
 
     private void apply(DomainEvent event) {
         if (event instanceof StudentEnrolledEvent e) {
