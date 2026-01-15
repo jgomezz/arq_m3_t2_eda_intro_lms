@@ -4,7 +4,7 @@
 1.- Crear Event Store  
      El Event Store es un almacén de eventos.
 
-<img src="images/event_sourcing_step_1.png" alt="Event Store" width="400"/>
+<img src="images/event_sourcing_step_1.png" alt="Event Store" width="300"/>
 
 Localización: 
 
