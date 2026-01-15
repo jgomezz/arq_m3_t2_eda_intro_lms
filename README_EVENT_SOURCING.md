@@ -11,7 +11,9 @@ Localización:
 <img src="images/event_sourcing_step_2.png" alt="Event Store" width="400"/>
 
 EventStore.java
-```
+
+```.java
+
 import com.tecsup.lms.shared.domain.event.DomainEvent;
 
 import java.util.List;
@@ -23,10 +25,12 @@ public interface EventStore {
     List<DomainEvent> getEvents(String aggregateId);
 
 }
+
 ```
 
 MemoryEventStore.java
-```
+
+```.java
 
 import com.tecsup.lms.shared.domain.event.DomainEvent;
 import lombok.extern.slf4j.Slf4j;
@@ -71,8 +75,10 @@ public class MemoryEventStore  implements EventStore{
 }
 
 ```
+
 MemoryEventStoreTest.java
-```
+
+```.java
 
 import com.tecsup.lms.shared.domain.event.DomainEvent;
 import org.junit.jupiter.api.BeforeEach;
@@ -92,7 +98,6 @@ class TestEvent extends DomainEvent {
         this.data = data;
     }
 }
-
 
 public class MemoryEventStoreTest {
 
@@ -125,6 +130,7 @@ public class MemoryEventStoreTest {
 
     }
 }
+
 ```
 
 2.- Crear Eventos de Enrollment
@@ -139,7 +145,9 @@ Localización:
 <img src="images/event_sourcing_step_4.png" alt="Event Store" width="400"/>
 
 StudentEnrolledEvent.java
-```
+
+```.java
+
 import com.tecsup.lms.shared.domain.event.DomainEvent;
 import lombok.Getter;
 
@@ -159,6 +167,7 @@ public class StudentEnrolledEvent extends DomainEvent {
         this.courseId = courseId;
     }
 }
+
 ```
 
 3.- Crear Aggregate Enrollment
@@ -170,7 +179,9 @@ Localización:
 <img src="images/event_sourcing_step_5.png" alt="Event Store" width="400"/>
 
 Enrollment.java
-```
+
+```.java
+
 import com.tecsup.lms.enrollments.domain.event.StudentEnrolledEvent;
 import com.tecsup.lms.shared.domain.event.DomainEvent;
 import lombok.Getter;
@@ -211,12 +222,15 @@ public class Enrollment {
     }
 
 }
+
 ```
 
 Agregamos otro evento : LessonCompletedEvent.java
 
 LessonCompletedEvent.java
-```
+
+```.java
+
 import com.tecsup.lms.shared.domain.event.DomainEvent;
 import lombok.Getter;
 
@@ -241,7 +255,8 @@ Hacer cambios en el Agregate Enrollment.java
 
 Enrollment.java
 
-```
+```.java
+
 ... 
 @Getter
 public class Enrollment {
@@ -263,6 +278,7 @@ public class Enrollment {
 
     }
  }
+ 
 ```
 
 Agregamos la clase de pruebas de EnrollmentTest
@@ -336,9 +352,8 @@ class EnrollmentTest {
 
     }
 }
+
 ```
-
-
 
 4.- Command Handler
     Procesa la solicitud de cambio y genera eventos
@@ -361,6 +376,7 @@ public class EnrollStudentCommand {
     private final String studentName;
     private final String courseId;
 }
+
 ```
 
 EnrollmentCommandHandler.java
