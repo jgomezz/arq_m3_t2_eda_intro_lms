@@ -8,7 +8,7 @@
 
 Localización: 
 
-<img src="images/event_sourcing_step_2.png" alt="Event Store" width="400"/>
+<img src="images/event_sourcing_step_2.png" alt="Event Store"/>
 
 EventStore.java
 
