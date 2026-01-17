@@ -28,5 +28,32 @@ docker-compose up -d
 - Acceder al enlace http://localhost:15672
   - Usuario: admin
   - Clave: admin123
-    
+  
+2.- Agregar dependencias de RabbitMQ en el archivo pom.xml
 
+```xml
+        <!-- Spring AMQP / RabbitMQ -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.amqp</groupId>
+            <artifactId>spring-rabbit-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+```
+
+3.- Configurar la conexión a RabbitMQ en application.properties
+
+```properties
+
+# Configuration for RabbitMQ
+spring.rabbitmq.host=localhost
+spring.rabbitmq.port=5672
+spring.rabbitmq.username=admin
+spring.rabbitmq.password=admin123
+
+```
