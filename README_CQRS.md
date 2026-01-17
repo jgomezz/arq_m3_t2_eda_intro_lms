@@ -1,6 +1,11 @@
 
 ## Implementación de CQRS : Enrollment 
 
+### Diagrama de secuencia
+
+<img src="images/cqrs_sequence_diagram.png" alt="CQRS" />
+
+
 1.- Crear el model de solo lectura, el repositorio y el projection
 
 Localización:
