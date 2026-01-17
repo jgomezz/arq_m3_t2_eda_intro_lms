@@ -2,6 +2,8 @@ package com.tecsup.lms.enrollments.infrastructure.web;
 
 import com.tecsup.lms.enrollments.application.command.EnrollStudentCommand;
 import com.tecsup.lms.enrollments.application.command.EnrollmentCommandHandler;
+import com.tecsup.lms.enrollments.application.query.EnrollmentQueryRepository;
+import com.tecsup.lms.enrollments.application.query.EnrollmentReadModel;
 import com.tecsup.lms.enrollments.domain.model.Enrollment;
 import com.tecsup.lms.enrollments.infrastructure.dto.EnrollmentRequest;
 import com.tecsup.lms.enrollments.infrastructure.dto.EnrollmentResponse;
@@ -17,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 public class EnrollmentController {
 
     private final EnrollmentCommandHandler enrollmentCommandHandler;
-
+    private final EnrollmentQueryRepository enrollmentQueryRepository;
 
     /**
      *  Enroll a student in a course
@@ -58,5 +60,20 @@ public class EnrollmentController {
 
         return ResponseEntity.ok().build();
     }
+
+
+    /**
+     *  CQRS --> READ MODE
+     * @param id
+     * @return
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<EnrollmentReadModel> getEnrollmentDetails(@PathVariable String id) {
+        EnrollmentReadModel readModel = enrollmentQueryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Enrollment not found"));
+
+        return ResponseEntity.ok(readModel);
+    }
+
 
 }
