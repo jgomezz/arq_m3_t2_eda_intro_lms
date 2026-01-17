@@ -1,4 +1,6 @@
-# MIGRATION A RABBITMQ
+# MIGRACIÓN A RABBITMQ
+
+<img src="images/rabbitmq_workflow.png" alt="RabbitMQ" />
 
 
 1. Crear el docker compose para RabbitMQ : docker-compose.yml
