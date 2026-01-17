@@ -4,13 +4,15 @@ import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
  * - Exchange            -->  "lms.event"
  * - Course Queue        -->  "lms.course"
- * - Event Create Course -->  "course.created"
+ * - Routing Key for Create Course -->  "course.created"
  */
 @Configuration
 public class RabbitMQConfig {
@@ -42,6 +44,7 @@ public class RabbitMQConfig {
      * Course Queue
      * @return
      */
+    @Bean
     public Queue courseQueue() {
         return new Queue(COURSE_QUEUE, true);
     }
@@ -51,12 +54,21 @@ public class RabbitMQConfig {
     /**
      * Course Queue Binding to Event Exchange with Course Created Routing Key
      */
+    @Bean
     public Binding courseBinding() {
         // Binding code would go here
         return BindingBuilder
                 .bind(courseQueue())
                 .to(eventExchange())
                 .with(COURSE_CREATED_RK);
+    }
+
+    /**
+     * Bean for serializacion
+     */
+    @Bean
+    public MessageConverter jsonMessageConverter() {
+        return new Jackson2JsonMessageConverter();
     }
 
 }
