@@ -7,7 +7,7 @@
 <img src="images/rabbitmq_class.png" alt="RabbitMQ" />
 
 
-I.- Creación del servidor de RabbitMQ
+**I.- Creación del servidor de RabbitMQ**
 
 1. Crear el docker compose para RabbitMQ : docker-compose.yml
 
