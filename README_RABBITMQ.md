@@ -7,6 +7,8 @@
 <img src="images/rabbitmq_class.png" alt="RabbitMQ" />
 
 
+I.- Creación del servidor de RabbitMQ
+
 1. Crear el docker compose para RabbitMQ : docker-compose.yml
 
 docker-compose.yml
@@ -37,7 +39,9 @@ docker-compose up -d
 - Acceder al enlace http://localhost:15672
   - Usuario: admin
   - Clave: admin123
-  
+
+II.- Configuración de RabbitMQ en la aplicación Spring Boot
+
 2.- Agregar dependencias de RabbitMQ en el archivo pom.xml
 
 ```xml
@@ -148,6 +152,8 @@ public class RabbitMQConfig {
 }
 
 ```
+
+III.- Configuración del publicador de eventos en RabbitMQ
 
 5. Crear el publicador de RabbitMQ : RabbitMQEventPublisher.java
 
@@ -270,3 +276,5 @@ public class BeanConfiguration {
 ```
 
 7.- Realizar la creación de un curso y revisar en la consola del RabbitMQ que se ha recibido el mensaje
+
+IV.- Configuración del consumidor de eventos en RabbitMQ
