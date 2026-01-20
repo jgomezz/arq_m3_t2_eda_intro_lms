@@ -188,7 +188,8 @@ public class RabbitMQEventPublisher {
 
 CreateCourseUseCase.java
 
-```
+```java
+
 import com.tecsup.lms.courses.domain.event.CourseCreatedEvent;
 import com.tecsup.lms.courses.domain.model.Course;
 import com.tecsup.lms.courses.domain.repository.CourseRepository;
@@ -242,7 +243,7 @@ public class CreateCourseUseCase {
 
 BeanConfiguration.java 
 
-```
+```java
 
 import com.tecsup.lms.courses.application.CreateCourseUseCase;
 import com.tecsup.lms.courses.application.PublishCourseUseCase;
@@ -273,6 +274,7 @@ public class BeanConfiguration {
         return new PublishCourseUseCase(repository, eventPublisher);
     }
 }
+
 ```
 
 7.- Realizar la creación de un curso y revisar en la consola del RabbitMQ que se ha recibido el mensaje
