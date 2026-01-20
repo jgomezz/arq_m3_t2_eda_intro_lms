@@ -280,3 +280,48 @@ public class BeanConfiguration {
 7.- Realizar la creación de un curso y revisar en la consola del RabbitMQ que se ha recibido el mensaje
 
 ## **IV.- Configuración del consumidor de eventos en RabbitMQ**
+
+8.- Crear el consumidor de RabbitMQ : CourseEventHandler.java
+
+
+<img src="images/rabbitmq_consumer_class.png" alt="RabbitMQ" />
+
+```java
+
+
+import com.tecsup.lms.courses.domain.event.CourseCreatedEvent;
+import com.tecsup.lms.shared.infrastructure.config.RabbitMQConfig;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Component;
+
+@Slf4j
+@Component
+public class CourseEventHandler {
+
+    //@EventListener                                
+    @RabbitListener(queues = RabbitMQConfig.COURSE_QUEUE )  // Agregar
+    public void handleCourseCreated(CourseCreatedEvent event) {
+
+        log.info(" [RabbitMQ] Manejando evento de curso creado: {} - {} - {}",
+                event.getCourseId(),
+                event.getTitle(),
+                event.getInstructor()
+        );
+        // Aquí se podría agregar la lógica para enviar notificaciones, por ejemplo.
+
+        sendEmailNotification(event);
+    }
+
+    private void sendEmailNotification(CourseCreatedEvent event) {
+        // Lógica simulada para enviar un correo electrónico
+        log.info(" [RabbitMQ] Enviando notificación por correo electrónico para el curso creado: {} - {}",
+                event.getCourseId(),
+                event.getTitle()
+        );
+    }
+    
+}
+
+```

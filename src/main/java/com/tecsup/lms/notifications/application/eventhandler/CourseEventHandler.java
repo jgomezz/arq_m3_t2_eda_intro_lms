@@ -1,7 +1,9 @@
 package com.tecsup.lms.notifications.application.eventhandler;
 
 import com.tecsup.lms.courses.domain.event.CourseCreatedEvent;
+import com.tecsup.lms.shared.infrastructure.config.RabbitMQConfig;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -9,9 +11,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class CourseEventHandler {
 
-    @EventListener
+    //@EventListener
+    @RabbitListener(queues = RabbitMQConfig.COURSE_QUEUE )
     public void handleCourseCreated(CourseCreatedEvent event) {
-        log.info("Manejando evento de curso creado: {} - {} - {}",
+
+        log.info(" [RabbitMQ] Manejando evento de curso creado: {} - {} - {}",
                 event.getCourseId(),
                 event.getTitle(),
                 event.getInstructor()
@@ -23,7 +27,7 @@ public class CourseEventHandler {
 
     private void sendEmailNotification(CourseCreatedEvent event) {
         // Lógica simulada para enviar un correo electrónico
-        log.info("Enviando notificación por correo electrónico para el curso creado: {} - {}",
+        log.info(" [RabbitMQ] Enviando notificación por correo electrónico para el curso creado: {} - {}",
                 event.getCourseId(),
                 event.getTitle()
         );
