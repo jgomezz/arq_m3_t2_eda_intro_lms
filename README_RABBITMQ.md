@@ -325,3 +325,7 @@ public class CourseEventHandler {
 }
 
 ```
+
+## EJERCICIO DE MIGRACIÓN
+
+- Migrar a RabbitMQ el evento de Publicación de cursos.
