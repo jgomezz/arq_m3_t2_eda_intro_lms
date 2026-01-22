@@ -53,3 +53,9 @@ volumes:
   kafka-data:
 
 ```
+Se debe ejecutar el docker-compose.yml con el siguiente comando:
+
+```bash
+docker-compose up -d        
+```
+
