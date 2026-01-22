@@ -554,3 +554,20 @@ public class PaymentHandler {
 }
 
 ```
+
+12.- Retirar las dependencias de Spring Retry del pom.xml
+
+```xml
+        <!-- Spring Retry (Retirar esta dependencia) -->
+        <dependency>
+            <groupId>org.springframework.retry</groupId>
+            <artifactId>spring-retry</artifactId>
+            <version>2.0.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aspects</artifactId>
+        </dependency>
+
+```
