@@ -6,11 +6,6 @@ import com.tecsup.lms.shared.infrastructure.dlq.DeadLetterQueue;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.context.event.EventListener;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Recover;
-import org.springframework.retry.annotation.Retryable;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.util.Random;
@@ -24,13 +19,6 @@ public class PaymentHandler {
 
     private final DeadLetterQueue dlq;
 
-    //@Async("eventExecutor") // No generara bloqueos
-    //@EventListener
-    /*
-    @Retryable(
-            maxAttempts = 2,  //
-            backoff = @Backoff(delay = 1000, multiplier = 2)
-    ) */
     @RabbitListener(queues = RabbitMQConfig.PAYMENT_QUEUE )
     public void handleCoursePublished(CoursePublishedEvent event) throws InterruptedException {
         log.info(" [RabbitMQ] Handling course published event for payment: {} - {} - ${}",
@@ -47,16 +35,6 @@ public class PaymentHandler {
         }
 
         log.info("Payment finished for course: {}", event.getTitle());
-
-    }
-
-    // @Recover
-    public void recover(RuntimeException e, CoursePublishedEvent event) {
-        log.error("All retries exhausted for payment processing of course: {}", event.getCourseId());
-
-        // Store in Dead Letter Queue or take alternative action
-        // TODO: Implement DLQ logic here
-        dlq.add(event, e);
 
     }
 

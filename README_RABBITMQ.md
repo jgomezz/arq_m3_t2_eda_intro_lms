@@ -336,3 +336,221 @@ public class CourseEventHandler {
 
 
 ## **V.- Configuración DLQ en RabbitMQ**
+
+9.- Definir los intentos máximos de reintento y el tiempo de espera entre reintentos en application.properties
+
+```properties
+
+# Retry
+spring.rabbitmq.listener.simple.retry.enabled=true
+spring.rabbitmq.listener.simple.retry.max-attempts=3
+spring.rabbitmq.listener.simple.retry.initial-interval=1000
+spring.rabbitmq.listener.simple.retry.multiplier=2.0
+
+# DLQ
+spring.rabbitmq.listener.simple.default-requeue-rejected=false
+
+```
+
+10.- Modificar la configuración de RabbitMQ para agregar las colas DLQ : RabbitMQConfig.java
+
+-> EXCHANGE_DLQ_NAME --------- (PAYMENT_DLQ) ---------> PAYMENT_DLQ
+
+```java
+
+import org.springframework.amqp.core.*;
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+import org.springframework.amqp.support.converter.MessageConverter;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import java.util.Map;
+
+/**
+ * - Exchange            -->  "lms.event"
+ * - Course Queue        -->  "lms.course"
+ * - Routing Key for Create Course -->  "course.created"
+ */
+@Configuration
+public class RabbitMQConfig {
+
+    // Exchange Name
+    public static final String EXCHANGE_NAME = "lms.event";
+    public static final String EXCHANGE_DLQ_NAME = "lms.event.dlq";  // AGREGAR
+
+    // Queues
+    public static final String COURSE_QUEUE = "lms.queue.course";
+    public static final String PAYMENT_QUEUE = "lms.queue.payment";
+
+    // Queues DLQ
+    public static final String PAYMENT_DLQ = "lms.queue.payment.dlq"; // AGREGAR
+
+    // Routing Keys
+    public static final String COURSE_CREATED_RK = "course.created";
+    public static final String COURSE_PUBLISHED_RK = "course.published";
+
+
+    // -- Exchanges
+
+    /**
+     * Event Exchange
+     * @return
+     */
+    @Bean
+    public TopicExchange eventExchange() {
+        return new TopicExchange(EXCHANGE_NAME);
+    }
+
+    // -- Exchanges DLQ
+
+    /**
+     * Event DLQ Exchange  AGREGAR
+     * @return
+     */
+    @Bean
+    public DirectExchange eventDLQExchange() {
+        return new DirectExchange(EXCHANGE_DLQ_NAME);
+    }
+
+
+    // -- Queues
+
+    /**
+     * Course Queue
+     * @return
+     */
+    @Bean
+    public Queue courseQueue() {
+        return new Queue(COURSE_QUEUE, true);
+    }
+
+
+    /**
+     *  Payment Queue  
+     * 
+     * @return
+     */
+    @Bean
+    public Queue paymentQueue() {   // MODIFICAR
+        //*
+        Map<String, Object> args = Map.of(
+                "x-dead-letter-exchange", EXCHANGE_DLQ_NAME,
+                "x-dead-letter-routing-key", PAYMENT_DLQ
+        );
+
+        return new Queue(PAYMENT_QUEUE,
+                true,false, false, args);
+        // */
+        // return new Queue(PAYMENT_QUEUE, true);
+    }
+
+    // -- Queues DLQ
+
+    /**
+     *  Payment DLQ Queue   // AGREGAR
+     * 
+     * @return
+     */
+    @Bean
+    public Queue paymentDLQ() {
+        return new Queue(PAYMENT_DLQ, true);
+    }
+
+
+
+    // -- Bindings
+
+    /**
+     * Course Queue Binding to Event Exchange with Course Created Routing Key
+     */
+    @Bean
+    public Binding courseBinding() {
+        // Binding code would go here
+        return BindingBuilder
+                .bind(courseQueue())
+                .to(eventExchange())
+                .with(COURSE_CREATED_RK);
+    }
+
+    @Bean
+    public Binding paymentBinding() {
+        // Binding code would go here
+        return BindingBuilder
+                .bind(paymentQueue())
+                .to(eventExchange())
+                .with(COURSE_PUBLISHED_RK);
+    }
+
+
+    // -- Bindings  DLQ
+
+    /**
+     *  Payment DLQ Binding   // AGREGAR
+     * @return
+     */
+    @Bean
+    public Binding paymentDLQBinding() {
+        return BindingBuilder
+                .bind(paymentDLQ())  // Queue DLQ
+                .to(eventDLQExchange()) // Exchange DLQ
+                .with(PAYMENT_DLQ); // Routing Key DLQ
+    }
+
+    /**
+     * Bean for serializacion
+     */
+    @Bean
+    public MessageConverter jsonMessageConverter() {
+        return new Jackson2JsonMessageConverter();
+    }
+
+}
+
+```
+
+11.- Modificar el consumidor de DLQ : PaymentDLQEventHandler.java
+
+```java
+
+
+import com.tecsup.lms.courses.domain.event.CoursePublishedEvent;
+import com.tecsup.lms.shared.infrastructure.config.RabbitMQConfig;
+import com.tecsup.lms.shared.infrastructure.dlq.DeadLetterQueue;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.stereotype.Component;
+
+import java.util.Random;
+
+@Slf4j
+@Component
+@RequiredArgsConstructor
+public class PaymentHandler {
+
+    private final Random random = new Random();
+
+    private final DeadLetterQueue dlq;
+
+    @RabbitListener(queues = RabbitMQConfig.PAYMENT_QUEUE )   // REEMPLAZA LAS ANOTACIONES ANTERIORES
+    public void handleCoursePublished(CoursePublishedEvent event) throws InterruptedException {
+        log.info(" [RabbitMQ] Handling course published event for payment: {} - {} - ${}",
+                event.getCourseId(),
+                event.getTitle(),
+                event.getPrice()
+        );
+
+        log.info("[{}] Processing payment ...", Thread.currentThread().getName());
+
+        if (random.nextBoolean()) {
+            log.info("Payment processing taking longer than expected...");
+            throw new RuntimeException("Payment processing failed due to timeout");
+        }
+
+        log.info("Payment finished for course: {}", event.getTitle());
+
+    }
+
+}
+
+```
