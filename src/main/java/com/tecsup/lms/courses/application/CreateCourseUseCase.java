@@ -5,6 +5,7 @@ import com.tecsup.lms.courses.domain.event.CourseCreatedEvent;
 import com.tecsup.lms.courses.domain.model.Course;
 import com.tecsup.lms.courses.domain.repository.CourseRepository;
 import com.tecsup.lms.shared.domain.event.RabbitMQEventPublisher;
+import com.tecsup.lms.shared.infrastructure.config.RabbitMQConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -36,7 +37,7 @@ public class CreateCourseUseCase {
 
         // Publicar el evento
         eventPublisher.publish(
-                COURSE_CREATED_RK,
+                RabbitMQConfig.COURSE_CREATED_RK,
                 new CourseCreatedEvent(
                         saved.getId().toString(),
                         saved.getTitle(),

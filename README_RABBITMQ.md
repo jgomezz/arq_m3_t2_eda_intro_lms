@@ -328,8 +328,11 @@ public class CourseEventHandler {
 
 ## EJERCICIO DE MIGRACIÓN A RABBITMQ
 
-- Migrar a RabbitMQ el evento de Publicación de cursos.
+- Migrar a RabbitMQ el evento de Publicación de Cursos.
 
 ## EJERCICIO DE CONSUMIDOR 
 
 - Crear un consumidor de RabbitMQ que escuche las Publicaciones de cursos.
+
+
+## **V.- Configuración DLQ en RabbitMQ**

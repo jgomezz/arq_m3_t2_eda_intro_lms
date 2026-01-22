@@ -22,9 +22,11 @@ public class RabbitMQConfig {
 
     // Queues
     public static final String COURSE_QUEUE = "lms.queue.course";
+    public static final String PAYMENT_QUEUE = "lms.queue.payment";
 
     // Routing Keys
     public static final String COURSE_CREATED_RK = "course.created";
+    public static final String COURSE_PUBLISHED_RK = "course.published";
 
 
     // -- Exchanges
@@ -49,6 +51,16 @@ public class RabbitMQConfig {
         return new Queue(COURSE_QUEUE, true);
     }
 
+
+    /**
+     *  Payment Queue
+     * @return
+     */
+    @Bean
+    public Queue paymentQueue() {
+        return new Queue(PAYMENT_QUEUE, true);
+    }
+
     // -- Bindings
 
     /**
@@ -62,6 +74,18 @@ public class RabbitMQConfig {
                 .to(eventExchange())
                 .with(COURSE_CREATED_RK);
     }
+
+    @Bean
+    public Binding paymentBinding() {
+        // Binding code would go here
+        return BindingBuilder
+                .bind(paymentQueue())
+                .to(eventExchange())
+                .with(COURSE_PUBLISHED_RK);
+    }
+
+
+
 
     /**
      * Bean for serializacion

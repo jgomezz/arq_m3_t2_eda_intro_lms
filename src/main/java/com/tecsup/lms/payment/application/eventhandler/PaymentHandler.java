@@ -1,9 +1,11 @@
 package com.tecsup.lms.payment.application.eventhandler;
 
 import com.tecsup.lms.courses.domain.event.CoursePublishedEvent;
+import com.tecsup.lms.shared.infrastructure.config.RabbitMQConfig;
 import com.tecsup.lms.shared.infrastructure.dlq.DeadLetterQueue;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.context.event.EventListener;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Recover;
@@ -22,13 +24,21 @@ public class PaymentHandler {
 
     private final DeadLetterQueue dlq;
 
-    @Async("eventExecutor") // No generara bloqueos
-    @EventListener
+    //@Async("eventExecutor") // No generara bloqueos
+    //@EventListener
+    /*
     @Retryable(
             maxAttempts = 2,  //
             backoff = @Backoff(delay = 1000, multiplier = 2)
-    )
+    ) */
+    @RabbitListener(queues = RabbitMQConfig.PAYMENT_QUEUE )
     public void handleCoursePublished(CoursePublishedEvent event) throws InterruptedException {
+        log.info(" [RabbitMQ] Handling course published event for payment: {} - {} - ${}",
+                event.getCourseId(),
+                event.getTitle(),
+                event.getPrice()
+        );
+
         log.info("[{}] Processing payment ...", Thread.currentThread().getName());
 
         if (random.nextBoolean()) {
@@ -40,7 +50,7 @@ public class PaymentHandler {
 
     }
 
-    @Recover
+    // @Recover
     public void recover(RuntimeException e, CoursePublishedEvent event) {
         log.error("All retries exhausted for payment processing of course: {}", event.getCourseId());
 

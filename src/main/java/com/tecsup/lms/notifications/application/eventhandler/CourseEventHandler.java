@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 public class CourseEventHandler {
 
     //@EventListener
-    //@RabbitListener(queues = RabbitMQConfig.COURSE_QUEUE )
+    @RabbitListener(queues = RabbitMQConfig.COURSE_QUEUE )
     public void handleCourseCreated(CourseCreatedEvent event) {
 
         log.info(" [RabbitMQ] Manejando evento de curso creado: {} - {} - {}",
