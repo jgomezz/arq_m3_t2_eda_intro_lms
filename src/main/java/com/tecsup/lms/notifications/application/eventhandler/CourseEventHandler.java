@@ -1,15 +1,33 @@
 package com.tecsup.lms.notifications.application.eventhandler;
 
 import com.tecsup.lms.courses.domain.event.CourseCreatedEvent;
+import com.tecsup.lms.shared.domain.event.DomainEvent;
+import com.tecsup.lms.shared.infrastructure.config.KafkaConfig;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.event.EventListener;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
 public class CourseEventHandler {
 
-    @EventListener
+    @KafkaListener(
+            topics = KafkaConfig.COURSE_EVENTS_TOPIC, // Topico a escuchar
+            groupId = "course-notifications-group"    // Grupo de consumidores
+    )
+    public void handleCourseEvents(DomainEvent event) {
+        if (event instanceof CourseCreatedEvent) {
+            handleCourseCreated((CourseCreatedEvent) event);
+        } else {
+            throw  new RuntimeException("Evento no manejado: " + event.getEventType());
+        }
+
+    }
+
+    /**
+     *  Maneja el evento de curso creado
+     * @param event
+     */
     public void handleCourseCreated(CourseCreatedEvent event) {
         log.info("Manejando evento de curso creado: {} - {} - {}",
                 event.getCourseId(),
@@ -17,9 +35,11 @@ public class CourseEventHandler {
                 event.getInstructor()
         );
         // Aquí se podría agregar la lógica para enviar notificaciones, por ejemplo.
-    
+
         sendEmailNotification(event);
     }
+
+
 
     private void sendEmailNotification(CourseCreatedEvent event) {
         // Lógica simulada para enviar un correo electrónico

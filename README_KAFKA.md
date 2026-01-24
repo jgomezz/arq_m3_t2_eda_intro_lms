@@ -144,7 +144,7 @@ public class KafkaConfig {
 ```
 
 
-4.- Implementar un Productor de Kafka
+4.- Implementar un Productor de Eventos con Kafka
 
 - Modificar la clase DomainEvent para agregar el metodo getKey()
 
@@ -261,10 +261,6 @@ public class KafkaEventPublisher {
 
 ```
 
-
-
-5.- Implementar un Consumidor de Kafka
-
 - Adaptar la clase CreateCourseUseCase.java
 
 ```.java
@@ -354,7 +350,61 @@ public class BeanConfiguration {
 
 ```
 
+5.- Adaptación del Consumidor CourseEventHandler.java  para soporte de Kafka 
 
+CourseEventHandler.java
 
+```.java
+
+import com.tecsup.lms.courses.domain.event.CourseCreatedEvent;
+import com.tecsup.lms.shared.domain.event.DomainEvent;
+import com.tecsup.lms.shared.infrastructure.config.KafkaConfig;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.stereotype.Component;
+
+@Slf4j
+@Component
+public class CourseEventHandler {
+
+    @KafkaListener(
+            topics = KafkaConfig.COURSE_EVENTS_TOPIC, // Topico a escuchar
+            groupId = "course-notifications-group"    // Grupo de consumidores
+    )
+    public void handleCourseEvents(DomainEvent event) {
+        if (event instanceof CourseCreatedEvent) {
+            handleCourseCreated((CourseCreatedEvent) event);
+        } else {
+            throw  new RuntimeException("Evento no manejado: " + event.getEventType());
+        }
+
+    }
+
+    /**
+     *  Maneja el evento de curso creado
+     * @param event
+     */
+    public void handleCourseCreated(CourseCreatedEvent event) {
+        log.info("Manejando evento de curso creado: {} - {} - {}",
+                event.getCourseId(),
+                event.getTitle(),
+                event.getInstructor()
+        );
+        // Aquí se podría agregar la lógica para enviar notificaciones, por ejemplo.
+
+        sendEmailNotification(event);
+    }
+
+    private void sendEmailNotification(CourseCreatedEvent event) {
+        // Lógica simulada para enviar un correo electrónico
+        log.info("Enviando notificación por correo electrónico para el curso creado: {} - {}",
+                event.getCourseId(),
+                event.getTitle()
+        );
+    }
+    
+}
+
+```
 
 6.- Realizar pruebas de integración con Kafka
