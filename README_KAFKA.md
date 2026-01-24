@@ -78,4 +78,20 @@ El servidor se puede visualizar en http://localhost:8090
     </dependency>
 ```
 
+2.- Configurar las propiedades de Kafka en application.properties
+
+```properties
+
+# Kafka Serializer Configuration
+spring.kafka.producer.key-serializer=org.apache.kafka.common.serialization.StringSerializer
+spring.kafka.producer.value-serializer=org.apache.kafka.common.serialization.StringSerializer
+
+# Kafka Deserializer Configuration
+spring.kafka.consumer.key-deserializer=org.apache.kafka.common.serialization.StringDeserializer
+spring.kafka.consumer.value-deserializer=org.apache.kafka.common.serialization.StringDeserializer
+
+# JSON Configuration
+spring.kafka.consumer.properties.spring.json.trusted.packages=*
+
+```
 
