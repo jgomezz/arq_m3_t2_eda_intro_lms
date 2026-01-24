@@ -1,4 +1,4 @@
-# MIGRACIÓN KAFKA
+# MIGRACIÓN A KAFKA
 
 <img src="images/kafka_class.png" alt="Kafka" />
 
