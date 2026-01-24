@@ -408,3 +408,11 @@ public class CourseEventHandler {
 ```
 
 6.- Realizar pruebas de integración con Kafka
+
+
+
+## **III.- Ejercicio**
+
+Implementar la publicación y consumo de eventos para la Publicación de Cursos usando Kafka
+
+
