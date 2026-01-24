@@ -413,6 +413,6 @@ public class CourseEventHandler {
 
 ## **III.- Ejercicio**
 
-Implementar la publicación y consumo de eventos para la Publicación de Cursos usando Kafka
+Implementar la publicación y consumo con Kakfa para el  evento : Publicación de Curso.
 
 
