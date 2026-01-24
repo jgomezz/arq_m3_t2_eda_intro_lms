@@ -4,7 +4,6 @@ package com.tecsup.lms.courses.application;
 import com.tecsup.lms.courses.domain.event.CourseCreatedEvent;
 import com.tecsup.lms.courses.domain.model.Course;
 import com.tecsup.lms.courses.domain.repository.CourseRepository;
-import com.tecsup.lms.shared.domain.event.EventPublisher;
 import com.tecsup.lms.shared.infrastructure.event.KafkaEventPublisher;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -82,13 +82,16 @@ El servidor se puede visualizar en http://localhost:8090
 
 ```properties
 
+# Kafka Configuration
+spring.kafka.bootstrap-servers=localhost:9092
+
 # Kafka Serializer Configuration
 spring.kafka.producer.key-serializer=org.apache.kafka.common.serialization.StringSerializer
-spring.kafka.producer.value-serializer=org.apache.kafka.common.serialization.StringSerializer
+spring.kafka.producer.value-serializer=org.springframework.kafka.support.serializer.JsonSerializer
 
 # Kafka Deserializer Configuration
 spring.kafka.consumer.key-deserializer=org.apache.kafka.common.serialization.StringDeserializer
-spring.kafka.consumer.value-deserializer=org.apache.kafka.common.serialization.StringDeserializer
+spring.kafka.consumer.value-deserializer=org.springframework.kafka.support.serializer.JsonDeserializer
 
 # JSON Configuration
 spring.kafka.consumer.properties.spring.json.trusted.packages=*
@@ -141,17 +144,215 @@ public class KafkaConfig {
 
 4.- Implementar un Productor de Kafka
 
-- Se requiere el publicador de eventos
+- Modificar la clase DomainEvent para agregar el metodo getKey()
+
+DomainEvent.java
 
 ```.java
 
+import lombok.Getter;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+@Getter
+public class DomainEvent {
+
+    private final String eventId;
+
+    private final String eventType;
+
+    private final LocalDateTime ocurredOn;
+
+    public DomainEvent() {
+        this.eventId = UUID.randomUUID().toString();
+        this.eventType = this.getClass().getSimpleName();
+        this.ocurredOn = LocalDateTime.now();
+    }
+    
+    /**
+     * Obtener la clave del evento para particionamiento en Kafka
+     * @return
+     */
+    public String getKey() {
+        throw new RuntimeException("Method getKey() not implemented");
+    }
+
+}
+
 ```
+
+- Se requiere modificar la clase CourseCreatedEvent para soportar la serialización con JSON ( Agregar el constructor sin argumentos)    y sorbreescribir el metodo getKey()
+  
+CourseCreatedEvent.java
+
+```.java
+
+import com.tecsup.lms.shared.domain.event.DomainEvent;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Getter
+@NoArgsConstructor  // AGREGAR
+public class CourseCreatedEvent extends DomainEvent {
+    private  String courseId;   // RETIRAR final
+    private  String title;      // RETIRAR final
+    private  String instructor; // RETIRAR final
+
+    public CourseCreatedEvent(String courseId, String title, String instructor) {
+        super();
+        this.courseId = courseId;
+        this.title = title;
+        this.instructor = instructor;
+    }
+
+    @Override          
+    public String getKey() {       // SOBREESCRIBIR EL METODO
+        return this.courseId;
+    }
+
+}
+
+
+```
+
+
+- Se requiere crear el publicador de eventos para Kafka
+
+KafkaEventPublisher.java
+
+```.java
+
+import com.tecsup.lms.shared.domain.event.DomainEvent;
+import com.tecsup.lms.shared.infrastructure.config.KafkaConfig;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.stereotype.Component;
+
+@Slf4j
+@Component
+@RequiredArgsConstructor
+public class KafkaEventPublisher {
+
+    //private final ApplicationEventPublisher publisher;
+    private final KafkaTemplate<String, DomainEvent> kafkaTemplate;
+
+    public void publish(DomainEvent event) {
+        log.info("Publicando: {} [{}]", event.getEventType(), event.getEventId());
+
+        //publisher.publishEvent(event);
+        String key = event.getKey(); // devuelva el course Id
+
+        kafkaTemplate.send(
+                KafkaConfig.COURSE_EVENTS_TOPIC,
+                key,
+                event
+        );
+
+        // La key sirve para identificar a que particion va el mensaje
+        // HASH(key) % N_PARTICIONES = particion
+
+    }
+}
+
+```
+
+
 
 5.- Implementar un Consumidor de Kafka
 
+- Adaptar la clase CreateCourseUseCase.java
 
 ```.java
 
+
+import com.tecsup.lms.courses.domain.event.CourseCreatedEvent;
+import com.tecsup.lms.courses.domain.model.Course;
+import com.tecsup.lms.courses.domain.repository.CourseRepository;
+import com.tecsup.lms.shared.infrastructure.event.KafkaEventPublisher;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+import java.time.LocalDateTime;
+
+@Slf4j
+@RequiredArgsConstructor
+public class CreateCourseUseCase {
+
+    private final CourseRepository repository;
+
+    //private final EventPublisher eventPublisher;
+    private final KafkaEventPublisher eventPublisher;
+
+    public Course createCourse(String title, String description, String instructor) {
+
+        Course course = Course.builder()
+                .title(title)
+                .description(description)
+                .instructor(instructor)
+                .status(Course.CourseStatus.DRAFT)
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        Course saved = repository.save(course);
+        log.info("Course created: {}", saved.getId());
+
+        // Publicar el evento
+        eventPublisher.publish(
+                new CourseCreatedEvent(
+                        saved.getId().toString(),
+                        saved.getTitle(),
+                        saved.getInstructor()
+                )
+        );
+
+        return saved;
+    }
+
+}
+
 ```
+
+- Adaptar la clase BeanConfiguration.java
+
+```.java
+
+
+import com.tecsup.lms.courses.application.CreateCourseUseCase;
+import com.tecsup.lms.courses.application.PublishCourseUseCase;
+import com.tecsup.lms.courses.domain.repository.CourseRepository;
+import com.tecsup.lms.shared.domain.event.EventPublisher;
+import com.tecsup.lms.shared.infrastructure.event.KafkaEventPublisher;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+/**
+ * CONFIGURACIÓN DE BEANS
+ * 
+ * Registra los Use Cases y Domain Services como beans de Spring.
+ * 
+ * Nota: Lombok @RequiredArgsConstructor se encarga de la inyección,
+ * aquí solo creamos las instancias.
+ */
+@Configuration
+public class BeanConfiguration {
+
+    @Bean
+    public CreateCourseUseCase createCourseUseCase(CourseRepository repository, KafkaEventPublisher eventPublisher) {
+        return new CreateCourseUseCase(repository, eventPublisher);
+    }
+
+    @Bean
+    public PublishCourseUseCase publishCourseUseCase(CourseRepository repository, EventPublisher eventPublisher) {
+        return new PublishCourseUseCase(repository, eventPublisher);
+    }
+}
+
+```
+
+
+
 
 6.- Realizar pruebas de integración con Kafka
