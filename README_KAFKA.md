@@ -1,5 +1,7 @@
 # MIGRACIÓN KAFKA
 
+<img src="images/kafka_class.png" alt="Kafka" />
+
 ## **I.- Creación del servidor de Kafka**
 
 - Creación del docker-compose.yml
