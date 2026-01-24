@@ -4,6 +4,7 @@ import com.tecsup.lms.courses.application.CreateCourseUseCase;
 import com.tecsup.lms.courses.application.PublishCourseUseCase;
 import com.tecsup.lms.courses.domain.repository.CourseRepository;
 import com.tecsup.lms.shared.domain.event.EventPublisher;
+import com.tecsup.lms.shared.infrastructure.event.KafkaEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -19,7 +20,7 @@ import org.springframework.context.annotation.Configuration;
 public class BeanConfiguration {
 
     @Bean
-    public CreateCourseUseCase createCourseUseCase(CourseRepository repository, EventPublisher eventPublisher) {
+    public CreateCourseUseCase createCourseUseCase(CourseRepository repository, KafkaEventPublisher eventPublisher) {
         return new CreateCourseUseCase(repository, eventPublisher);
     }
 

@@ -137,3 +137,21 @@ public class KafkaConfig {
 }
 
 ```
+
+
+4.- Implementar un Productor de Kafka
+
+- Se requiere el publicador de eventos
+
+```.java
+
+```
+
+5.- Implementar un Consumidor de Kafka
+
+
+```.java
+
+```
+
+6.- Realizar pruebas de integración con Kafka

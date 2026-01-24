@@ -20,5 +20,8 @@ public class DomainEvent {
         this.ocurredOn = LocalDateTime.now();
     }
 
+    public String getKey() {
+        throw new RuntimeException("Method getKey() not implemented");
+    }
 
 }
