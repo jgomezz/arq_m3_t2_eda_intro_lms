@@ -2,7 +2,7 @@
 
 ## **I.- Creación del servidor de Kafka**
 
-- docker-compose.yml
+- Creación del docker-compose.yml
 
 ```yaml
 
@@ -58,4 +58,24 @@ Se debe ejecutar el docker-compose.yml con el siguiente comando:
 ```bash
 docker-compose up -d        
 ```
+El servidor se puede visualizar en http://localhost:8090
+
+## **II.- Configuración de una aplicación de Spring Boot para usar Kafka**
+
+1.- Agregar las dependencias en el pom.xml
+
+```xml
+    <!-- Spring for Apache Kafka -->
+    <dependency>
+        <groupId>org.springframework.kafka</groupId>
+        <artifactId>spring-kafka</artifactId>
+    </dependency>
+    
+    <dependency>
+        <groupId>org.springframework.kafka</groupId>
+        <artifactId>spring-kafka-test</artifactId>
+        <scope>test</scope>
+    </dependency>
+```
+
 
