@@ -422,6 +422,8 @@ Implementar la publicación y consumo con Kakfa para el  evento : Publicación d
 
 ### 1.- Crear el tópico DLQ
 
+KafkaConfig.java
+
 ``` .java
 
 import org.apache.kafka.clients.admin.NewTopic;
@@ -474,8 +476,10 @@ public class KafkaConfig {
 
 ```
 
-### 2.- Migrar al DLQ de Kafka
+### 2.- Migrar al DLQ a Kafka
 
+
+DeadLetterQueue.java
 
 ``` .java
 
@@ -548,6 +552,9 @@ public class DeadLetterQueue {
 ```
 
 3.- Adaptar el PaymentHandler para usar DLQ
+
+
+PaymentHandler.java
 
 ``` .java
 
