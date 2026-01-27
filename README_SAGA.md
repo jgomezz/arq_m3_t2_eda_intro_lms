@@ -8,3 +8,5 @@ Se desea realizar la matricula de un estudiante en un curso,a continuacion se de
 - 4.- Si el pago no se realizo correctamente, se cancela la solicitud de matricula. ( Enrollment)
 
 <img src="images/saga_kafka.png" alt="Diagrama del Patrón Saga" />
+
+<img src="images/saga_structure.png"  />
