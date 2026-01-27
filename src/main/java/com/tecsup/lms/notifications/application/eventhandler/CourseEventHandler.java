@@ -13,13 +13,11 @@ public class CourseEventHandler {
 
     @KafkaListener(
             topics = KafkaConfig.COURSE_EVENTS_TOPIC, // Topico a escuchar
-            groupId = "course-notifications-group"    // Grupo de consumidores
+            groupId = "courses-service-group"    // Grupo de consumidores
     )
     public void handleCourseEvents(DomainEvent event) {
         if (event instanceof CourseCreatedEvent) {
             handleCourseCreated((CourseCreatedEvent) event);
-        } else {
-            throw  new RuntimeException("Evento no manejado: " + event.getEventType());
         }
 
     }

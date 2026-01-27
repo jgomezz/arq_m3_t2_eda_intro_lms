@@ -2,12 +2,14 @@ package com.tecsup.lms.courses.domain.event;
 
 import com.tecsup.lms.shared.domain.event.DomainEvent;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class CoursePublishedEvent extends DomainEvent {
-    private final String courseId;
-    private final String title;
-    private final double price;
+    private  String courseId;
+    private  String title;
+    private  double price;
 
     public CoursePublishedEvent(String courseId, String title, double price) {
         super();
@@ -15,4 +17,10 @@ public class CoursePublishedEvent extends DomainEvent {
         this.title = title;
         this.price = price;
     }
+
+    @Override
+    public String getKey() {
+        return this.courseId;
+    }
+
 }

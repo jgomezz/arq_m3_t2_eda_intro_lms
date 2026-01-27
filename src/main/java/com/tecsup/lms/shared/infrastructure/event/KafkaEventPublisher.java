@@ -1,5 +1,7 @@
 package com.tecsup.lms.shared.infrastructure.event;
 
+import com.tecsup.lms.courses.domain.event.CourseCreatedEvent;
+import com.tecsup.lms.courses.domain.event.CoursePublishedEvent;
 import com.tecsup.lms.shared.domain.event.DomainEvent;
 import com.tecsup.lms.shared.infrastructure.config.KafkaConfig;
 import lombok.RequiredArgsConstructor;
@@ -20,10 +22,15 @@ public class KafkaEventPublisher {
         log.info("Publicando: {} [{}]", event.getEventType(), event.getEventId());
 
         //publisher.publishEvent(event);
+
+        String topic = getTopicFromEvent(event);
+
         String key = event.getKey(); // devuelva el course Id
 
+
+
         kafkaTemplate.send(
-                KafkaConfig.COURSE_EVENTS_TOPIC,
+                topic,  // KafkaConfig.COURSE_EVENTS_TOPIC,
                 key,
                 event
         );
@@ -31,6 +38,17 @@ public class KafkaEventPublisher {
         // La key sirve para identificar a que particion va el mensaje
         // HASH(key) % N_PARTICIONES = particion
 
+
+    }
+
+    private String getTopicFromEvent(DomainEvent event) {
+
+        if ( event instanceof CourseCreatedEvent ||
+                event instanceof CoursePublishedEvent) {
+            return KafkaConfig.COURSE_EVENTS_TOPIC;
+        } else {
+            throw new IllegalArgumentException("Unknown event type: " + event.getEventType());
+        }
 
     }
 }

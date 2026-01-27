@@ -4,6 +4,7 @@ import com.tecsup.lms.courses.domain.event.CoursePublishedEvent;
 import com.tecsup.lms.courses.domain.model.Course;
 import com.tecsup.lms.courses.domain.repository.CourseRepository;
 import com.tecsup.lms.shared.domain.event.EventPublisher;
+import com.tecsup.lms.shared.infrastructure.event.KafkaEventPublisher;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +15,8 @@ public class PublishCourseUseCase {
 
     private final CourseRepository repository;
 
-    private final EventPublisher eventPublisher;
+    //private final EventPublisher eventPublisher;
+    private final KafkaEventPublisher eventPublisher;
 
     @Transactional
     public Course publishCourse(Long courseId, double price) {
