@@ -7,4 +7,4 @@ Se desea realizar la matricula de un estudiante en un curso,a continuacion se de
 - 3.- Si el pago es exitoso, se procede a registrar al estudiante en el curso. ( Enrollment)
 - 4.- Si el pago no se realizo correctamente, se cancela la solicitud de matricula. ( Enrollment)
 
-<img src="images/saga_kafka.png" alt="Diagrama del Patrón Saga" width="600"/>
+<img src="images/saga_kafka.png" alt="Diagrama del Patrón Saga" />
