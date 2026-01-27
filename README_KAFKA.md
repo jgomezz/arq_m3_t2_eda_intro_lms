@@ -417,6 +417,9 @@ Implementar la publicación y consumo con Kakfa para el  evento : Publicación d
 
 # DLQ  EN KAFKA
 
+<img src="images/kafka_dlq.png" alt="DLQ Kafka" />
+
+
 ### 1.- Crear el tópico DLQ
 
 ``` .java
@@ -473,7 +476,6 @@ public class KafkaConfig {
 
 ### 2.- Migrar al DLQ de Kafka
 
-<img src="images/kafka_dlq.png" alt="DLQ Kafka" />
 
 ``` .java
 
