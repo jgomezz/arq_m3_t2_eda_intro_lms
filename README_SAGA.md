@@ -1,4 +1,4 @@
-# IMPLEMENTACIÓN DEL PATRON SAGA 
+# IMPLEMENTACIÓN DEL PATRÓN SAGA 
 
 Contexto :
 Se desea realizar la matricula de un estudiante en un curso,a continuacion se describen los pasos a seguir para llevar a cabo este proceso utilizando el patrón Saga para manejar las transacciones distribuidas y asegurar la consistencia de los datos.
@@ -10,6 +10,8 @@ Se desea realizar la matricula de un estudiante en un curso,a continuacion se de
 <img src="images/saga_kafka.png" alt="Diagrama del Patrón Saga" />
 
 <img src="images/saga_structure.png"  />
+
+# IMPLEMENTACIÓN DEL --> Envió del Evento EnrollmentRequestedEvent
 
 ## 1.- Definir el evento EnrollmentRequestedEvent.java
 
