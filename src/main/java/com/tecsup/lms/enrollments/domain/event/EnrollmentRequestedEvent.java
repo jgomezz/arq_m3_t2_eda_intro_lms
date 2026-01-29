@@ -3,7 +3,6 @@ package com.tecsup.lms.enrollments.domain.event;
 import com.tecsup.lms.shared.domain.event.DomainEvent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;

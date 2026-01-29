@@ -15,19 +15,32 @@ Se desea realizar la matricula de un estudiante en un curso,a continuacion se de
 
 ```java
 
+package com.tecsup.lms.enrollments.domain.event;
+
+import com.tecsup.lms.shared.domain.event.DomainEvent;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Data
-public class EnrollmentRequest {
-    private  String studentId;
-    private  String studentName;
-    private  String courseId;
+@NoArgsConstructor
+@AllArgsConstructor
+public class EnrollmentRequestedEvent extends DomainEvent {
 
-    // Nuevo campo
+    private String enrollmentId;
+    private String studentId;
+    private String studentName;
+    private String courseId;
     private BigDecimal amount;
+    private LocalDateTime timestamp;
 
+    @Override
+    public String getKey() {
+        return enrollmentId;
+    }
 }
 
 ```
@@ -35,6 +48,10 @@ public class EnrollmentRequest {
 ## 2.- Definir EnrollmentSagaHandler.java
 
 ```java
+
+package com.tecsup.lms.enrollments.application.saga;
+
+
 import com.tecsup.lms.enrollments.domain.event.EnrollmentRequestedEvent;
 import com.tecsup.lms.shared.infrastructure.event.KafkaEventPublisher;
 import lombok.RequiredArgsConstructor;
@@ -84,6 +101,8 @@ public class EnrollmentSagaHandler {
 EnrollmentRequest.java
 ```java
 
+package com.tecsup.lms.enrollments.infrastructure.dto;
+
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -103,6 +122,9 @@ public class EnrollmentRequest {
 
 EnrollmentResponse.java
 ```java
+
+package com.tecsup.lms.enrollments.infrastructure.dto;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -124,6 +146,8 @@ EnrollmentController.java
 - Agregar el siguiente método al controlador:
 
 ```java
+
+package com.tecsup.lms.enrollments.infrastructure.web;
 
     @PostMapping
     public ResponseEntity<EnrollmentResponse>
@@ -180,6 +204,9 @@ EnrollmentController.java
 Hacer las siguientes modificaciones en KafkaConfig.java:
 ```.java
 
+package com.tecsup.lms.shared.infrastructure.config;
+
+
     // SAGA
     public static final String ENROLLMENT_REQUEST_TOPIC = "enrollment.requested";
 
@@ -198,6 +225,7 @@ Hacer las siguientes modificaciones en KafkaConfig.java:
 
 Adaptar el método publish para manejar el nuevo evento EnrollmentRequestedEvent
 ``` .java
+package com.tecsup.lms.shared.infrastructure.event;
 
         private String getTopicFromEvent(DomainEvent event) {
 
