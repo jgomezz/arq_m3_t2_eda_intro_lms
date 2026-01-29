@@ -1,6 +1,7 @@
 package com.tecsup.lms.payment.application.saga;
 
 import com.tecsup.lms.enrollments.domain.event.EnrollmentRequestedEvent;
+import com.tecsup.lms.payment.domain.event.PaymentFailedEvent;
 import com.tecsup.lms.payment.domain.event.PaymentProcessedEvent;
 import com.tecsup.lms.shared.infrastructure.config.KafkaConfig;
 import com.tecsup.lms.shared.infrastructure.event.KafkaEventPublisher;
@@ -64,9 +65,23 @@ public class PaymentSagaHandler {
                 log.info("   Transaction ID: {}", transactionId);
 
             } else {
+
+                // PAGO FALLIDO
+
                 log.warn("❌ [PAYMENT] El pago falló para enrollment ID: {}", event.getEnrollmentId());
                 // Aquí se podría publicar un evento de pago fallido si fuera necesario
                 // PaymentFailedEvent
+
+                PaymentFailedEvent failedEvent = new PaymentFailedEvent(
+                        event.getEnrollmentId(),
+                        "PAYMENT_DECLINED",
+                        "El pago fue rechazado por el proveedor, saldo insuficiente.",
+                        LocalDateTime.now()
+                );
+
+                this.kafkaEventPublisher.publish(failedEvent);
+
+                log.warn("📨 [PAYMENT] Evento PaymentFailed publicado");
 
             }
 

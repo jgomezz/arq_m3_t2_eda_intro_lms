@@ -626,3 +626,313 @@ GET http://localhost:8080/api/enrollments/request
 "amount": 99.99
 } 
 ```
+
+# IV.- IMPLEMENTACIÓN del publicador del Evento PaymentFailedEvent
+
+## 1.- Crear PaymentFailedEvent.java 
+
+``` .java
+
+package com.tecsup.lms.payment.domain.event;
+
+import com.tecsup.lms.shared.domain.event.DomainEvent;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+public class PaymentFailedEvent extends DomainEvent {
+
+    private String enrollmentId;
+    private String reason;
+    private String errorCode;
+    private LocalDateTime timestamp;
+
+    @Override
+    public String getKey() {
+        return enrollmentId;
+    }
+}
+
+```
+
+## 2.- Modificar PaymentSagaHandler.java ( Cuando el pago falla)
+
+``` .java
+package com.tecsup.lms.payment.application.saga;
+
+import com.tecsup.lms.enrollments.domain.event.EnrollmentRequestedEvent;
+import com.tecsup.lms.payment.domain.event.PaymentFailedEvent;
+import com.tecsup.lms.payment.domain.event.PaymentProcessedEvent;
+import com.tecsup.lms.shared.infrastructure.config.KafkaConfig;
+import com.tecsup.lms.shared.infrastructure.event.KafkaEventPublisher;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.Random;
+import java.util.UUID;
+
+@Slf4j
+@Service
+@RequiredArgsConstructor
+public class PaymentSagaHandler {
+
+    private final KafkaEventPublisher kafkaEventPublisher;
+    private final Random random = new Random();
+
+    @KafkaListener(
+            topics = KafkaConfig.ENROLLMENT_REQUESTED_TOPIC,  //"enrollment.requested",
+            groupId = "payment-service-group"
+    )
+    @Transactional
+    public void handleEnrollmentRequested(EnrollmentRequestedEvent event) {
+
+        log.info("💳 [PAYMENT] Procesando pago para enrollment");
+        log.info("   Enrollment ID: {}", event.getEnrollmentId());
+        log.info("   Student: {}", event.getStudentName());
+        log.info("   Amount: ${}", event.getAmount());
+
+        try {
+            // Simular tiempo de procesamiento
+            Thread.sleep(1000 + random.nextInt(2000)); // 1-3 segundos
+
+            // Simular resultado: 60% éxito, 40% fallo
+            boolean paymentSuccess = random.nextInt(100) < 60;
+
+            if(paymentSuccess) {
+
+                // PAGO EXITOSO
+
+                log.info("✅ [PAYMENT] Pago procesado exitosamente para enrollment ID: {}", event.getEnrollmentId());
+                // Aquí se podría publicar un evento de pago exitoso si fuera necesario
+
+                // PaymentProcessedEvent
+
+                String transactionId = "tx-" + UUID.randomUUID();
+
+                PaymentProcessedEvent processedEvent = new PaymentProcessedEvent(
+                        event.getEnrollmentId(),
+                        transactionId,
+                        event.getAmount(),
+                        LocalDateTime.now());
+
+                kafkaEventPublisher.publish(processedEvent);
+
+                log.info("✅ [PAYMENT] Pago procesado exitosamente");
+                log.info("   Transaction ID: {}", transactionId);
+
+            } else {
+                // ---------------------- NUEVO -------------------
+                // PAGO FALLIDO 
+
+                log.warn("❌ [PAYMENT] El pago falló para enrollment ID: {}", event.getEnrollmentId());
+                // Aquí se podría publicar un evento de pago fallido si fuera necesario
+                // PaymentFailedEvent
+
+                PaymentFailedEvent failedEvent = new PaymentFailedEvent(
+                        event.getEnrollmentId(),
+                        "PAYMENT_DECLINED",
+                        "El pago fue rechazado por el proveedor, saldo insuficiente.",
+                        LocalDateTime.now()
+                );
+
+                this.kafkaEventPublisher.publish(failedEvent);
+
+                log.warn("📨 [PAYMENT] Evento PaymentFailed publicado");
+                
+                // ---------------------- NUEVO -------------------
+
+            }
+
+
+        } catch (Exception e) {
+            log.error("💥 [PAYMENT] Error procesando pago", e);
+        }
+
+    }
+
+}
+
+```
+## 3.- Modificar KafkaConfig.java
+
+``` .java
+
+package com.tecsup.lms.shared.infrastructure.config;
+
+import org.apache.kafka.clients.admin.NewTopic;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.kafka.annotation.EnableKafka;
+import org.springframework.kafka.config.TopicBuilder;
+
+/**
+ * KafkaConfig
+ *
+ *             Topic       -->     Particiones
+ *       Eventos del curso             3
+ *          course.events
+ */
+@EnableKafka
+@Configuration
+public class KafkaConfig {
+
+    // Setting topics
+    public static final String COURSE_EVENTS_TOPIC = "course.events";
+
+    // DLQ
+    public static final String DLQ_COURSE_EVENTS_TOPIC = "dlq.course.events";  // ✅ DLQ Topic
+
+    // SAGA
+    public static final String ENROLLMENT_REQUESTED_TOPIC = "enrollment.requested";
+    public static final String PAYMENT_PROCESSED_TOPIC = "payment.processed";
+    public static final String PAYMENT_FAILED_TOPIC = "payment.failed";  // AGREGAR
+
+
+    // Setting Queues/Partitions
+
+    /**
+     *  Topic de eventos de cursos
+     * @return
+     */
+    @Bean
+    public NewTopic courseEventsTopic() {
+        return new NewTopic(COURSE_EVENTS_TOPIC, // topic
+                3,  // Nro particiones
+                (short) 1  // Nro de replicas
+        );
+    }
+
+    // DLQ
+    @Bean
+    public NewTopic dlqCourseEventsTopic() {
+        return TopicBuilder.name(DLQ_COURSE_EVENTS_TOPIC)
+                .partitions(1)
+                .replicas(1)
+                .build();
+    }
+
+    // SAGA
+    @Bean
+    public NewTopic enrollmentRequestedTopic() {
+        return TopicBuilder
+                .name(ENROLLMENT_REQUESTED_TOPIC)
+                .partitions(3)
+                .replicas(1)
+                .build();
+    }
+
+    @Bean
+    public NewTopic paymentProcessedTopic() {
+        return TopicBuilder
+                .name(PAYMENT_PROCESSED_TOPIC)
+                .partitions(3)
+                .replicas(1)
+                .build();
+    }
+
+
+    // NUEVO BEAN
+    @Bean
+    public NewTopic paymentFailedTopic() {
+        return TopicBuilder
+                .name(PAYMENT_FAILED_TOPIC)
+                .partitions(3)
+                .replicas(1)
+                .build();
+    }
+
+}
+
+
+``` 
+
+## 4.- Modificar KafkaEventPublisher.java
+
+``` .java
+
+package com.tecsup.lms.shared.infrastructure.event;
+
+import com.tecsup.lms.courses.domain.event.CourseCreatedEvent;
+import com.tecsup.lms.courses.domain.event.CoursePublishedEvent;
+import com.tecsup.lms.enrollments.domain.event.EnrollmentRequestedEvent;
+import com.tecsup.lms.payment.domain.event.PaymentFailedEvent;
+import com.tecsup.lms.payment.domain.event.PaymentProcessedEvent;
+import com.tecsup.lms.shared.domain.event.DomainEvent;
+import com.tecsup.lms.shared.infrastructure.config.KafkaConfig;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.stereotype.Component;
+
+@Slf4j
+@Component
+@RequiredArgsConstructor
+public class KafkaEventPublisher {
+
+    //private final ApplicationEventPublisher publisher;
+    private final KafkaTemplate<String, DomainEvent> kafkaTemplate;
+
+    public void publish(DomainEvent event) {
+        log.info("Publicando: {} [{}]", event.getEventType(), event.getEventId());
+
+        //publisher.publishEvent(event);
+
+        String topic = getTopicFromEvent(event);
+
+        String key = event.getKey(); // devuelva el course Id
+
+
+
+        kafkaTemplate.send(
+                topic,  // KafkaConfig.COURSE_EVENTS_TOPIC,
+                key,
+                event
+        );
+
+        // La key sirve para identificar a que particion va el mensaje
+        // HASH(key) % N_PARTICIONES = particion
+
+
+    }
+
+    private String getTopicFromEvent(DomainEvent event) {
+
+        if ( event instanceof CourseCreatedEvent ||
+                event instanceof CoursePublishedEvent) {
+            return KafkaConfig.COURSE_EVENTS_TOPIC;
+        } else if (event instanceof EnrollmentRequestedEvent) {
+            return KafkaConfig.ENROLLMENT_REQUESTED_TOPIC;
+        } else if (event instanceof PaymentProcessedEvent) {
+            return KafkaConfig.PAYMENT_PROCESSED_TOPIC;
+        } else if (event instanceof PaymentFailedEvent) {   // AGREGAR
+            return KafkaConfig.PAYMENT_FAILED_TOPIC;        // AGREGAR
+        } else {
+            throw new IllegalArgumentException("Unknown event type: " + event.getEventType());
+        }
+
+    }
+}
+ 
+```
+
+
+## 5.- Pruebas
+
+```json
+GET http://localhost:8080/api/enrollments/request
+{
+"studentId": "student-21",
+"studentName": "Jose Leon",
+"courseId": "course-100",
+"amount": 99.99
+} 
+```

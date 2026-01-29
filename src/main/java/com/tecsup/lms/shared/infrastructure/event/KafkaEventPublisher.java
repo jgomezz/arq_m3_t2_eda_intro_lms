@@ -3,6 +3,7 @@ package com.tecsup.lms.shared.infrastructure.event;
 import com.tecsup.lms.courses.domain.event.CourseCreatedEvent;
 import com.tecsup.lms.courses.domain.event.CoursePublishedEvent;
 import com.tecsup.lms.enrollments.domain.event.EnrollmentRequestedEvent;
+import com.tecsup.lms.payment.domain.event.PaymentFailedEvent;
 import com.tecsup.lms.payment.domain.event.PaymentProcessedEvent;
 import com.tecsup.lms.shared.domain.event.DomainEvent;
 import com.tecsup.lms.shared.infrastructure.config.KafkaConfig;
@@ -51,6 +52,8 @@ public class KafkaEventPublisher {
             return KafkaConfig.ENROLLMENT_REQUESTED_TOPIC;
         } else if (event instanceof PaymentProcessedEvent) {
             return KafkaConfig.PAYMENT_PROCESSED_TOPIC;
+        } else if (event instanceof PaymentFailedEvent) {
+            return KafkaConfig.PAYMENT_FAILED_TOPIC;
         } else {
             throw new IllegalArgumentException("Unknown event type: " + event.getEventType());
         }
