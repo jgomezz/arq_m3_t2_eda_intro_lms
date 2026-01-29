@@ -3,11 +3,11 @@ package com.tecsup.lms.shared.infrastructure.event;
 import com.tecsup.lms.courses.domain.event.CourseCreatedEvent;
 import com.tecsup.lms.courses.domain.event.CoursePublishedEvent;
 import com.tecsup.lms.enrollments.domain.event.EnrollmentRequestedEvent;
+import com.tecsup.lms.payment.domain.event.PaymentProcessedEvent;
 import com.tecsup.lms.shared.domain.event.DomainEvent;
 import com.tecsup.lms.shared.infrastructure.config.KafkaConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
@@ -48,7 +48,9 @@ public class KafkaEventPublisher {
                 event instanceof CoursePublishedEvent) {
             return KafkaConfig.COURSE_EVENTS_TOPIC;
         } else if (event instanceof EnrollmentRequestedEvent) {
-            return KafkaConfig.ENROLLMENT_REQUEST_TOPIC;
+            return KafkaConfig.ENROLLMENT_REQUESTED_TOPIC;
+        } else if (event instanceof PaymentProcessedEvent) {
+            return KafkaConfig.PAYMENT_PROCESSED_TOPIC;
         } else {
             throw new IllegalArgumentException("Unknown event type: " + event.getEventType());
         }

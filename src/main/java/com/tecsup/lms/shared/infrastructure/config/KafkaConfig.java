@@ -24,7 +24,8 @@ public class KafkaConfig {
     public static final String DLQ_COURSE_EVENTS_TOPIC = "dlq.course.events";  // ✅ DLQ Topic
 
     // SAGA
-    public static final String ENROLLMENT_REQUEST_TOPIC = "enrollment.requested";
+    public static final String ENROLLMENT_REQUESTED_TOPIC = "enrollment.requested";
+    public static final String PAYMENT_PROCESSED_TOPIC = "payment.processed";
 
 
     // Setting Queues/Partitions
@@ -54,7 +55,16 @@ public class KafkaConfig {
     @Bean
     public NewTopic enrollmentRequestedTopic() {
         return TopicBuilder
-                .name(ENROLLMENT_REQUEST_TOPIC)
+                .name(ENROLLMENT_REQUESTED_TOPIC)
+                .partitions(3)
+                .replicas(1)
+                .build();
+    }
+
+    @Bean
+    public NewTopic paymentProcessedTopic() {
+        return TopicBuilder
+                .name(PAYMENT_PROCESSED_TOPIC)
                 .partitions(3)
                 .replicas(1)
                 .build();
