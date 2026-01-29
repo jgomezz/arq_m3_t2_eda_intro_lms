@@ -1,9 +1,12 @@
 package com.tecsup.lms.enrollments.application.saga;
 
 import com.tecsup.lms.enrollments.domain.event.EnrollmentRequestedEvent;
+import com.tecsup.lms.payment.domain.event.PaymentProcessedEvent;
+import com.tecsup.lms.shared.infrastructure.config.KafkaConfig;
 import com.tecsup.lms.shared.infrastructure.event.KafkaEventPublisher;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,4 +43,26 @@ public class EnrollmentSagaHandler {
 
         return enrollmentId;
     }
+
+    /**
+     * PASO 2: Reaccionar a pago exitoso
+     */
+    @KafkaListener(
+            topics = KafkaConfig.PAYMENT_PROCESSED_TOPIC,
+            groupId = "enrollment-saga-group"
+    )
+    @Transactional
+    public void handlePaymentProcessed(PaymentProcessedEvent event) {
+
+        log.info("💳 [SAGA] Pago procesado exitosamente");
+        log.info("   Enrollment ID: {}", event.getEnrollmentId());
+        log.info("   Transaction ID: {}", event.getTransactionId());
+
+        // TODO
+
+        log.info("✅ [SAGA] Enrollment confirmada");
+        log.info("📨 [SAGA] Evento EnrollmentConfirmed publicado");
+    }
+
+
 }
