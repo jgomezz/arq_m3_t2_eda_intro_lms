@@ -616,7 +616,7 @@ public class EnrollmentSagaHandler {
 
 
 ## 2.- Pruebas
-
+ 
 ```json
 GET http://localhost:8080/api/enrollments/request
 {
