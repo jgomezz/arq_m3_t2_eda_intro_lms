@@ -23,6 +23,10 @@ public class KafkaConfig {
     // DLQ
     public static final String DLQ_COURSE_EVENTS_TOPIC = "dlq.course.events";  // ✅ DLQ Topic
 
+    // SAGA
+    public static final String ENROLLMENT_REQUEST_TOPIC = "enrollment.requested";
+
+
     // Setting Queues/Partitions
 
     /**
@@ -42,6 +46,16 @@ public class KafkaConfig {
     public NewTopic dlqCourseEventsTopic() {
         return TopicBuilder.name(DLQ_COURSE_EVENTS_TOPIC)
                 .partitions(1)
+                .replicas(1)
+                .build();
+    }
+
+    // SAGA
+    @Bean
+    public NewTopic enrollmentRequestedTopic() {
+        return TopicBuilder
+                .name(ENROLLMENT_REQUEST_TOPIC)
+                .partitions(3)
                 .replicas(1)
                 .build();
     }

@@ -2,11 +2,13 @@ package com.tecsup.lms.enrollments.infrastructure.web;
 
 import com.tecsup.lms.enrollments.application.command.EnrollStudentCommand;
 import com.tecsup.lms.enrollments.application.command.EnrollmentCommandHandler;
+import com.tecsup.lms.enrollments.application.saga.EnrollmentSagaHandler;
 import com.tecsup.lms.enrollments.domain.model.Enrollment;
 import com.tecsup.lms.enrollments.infrastructure.dto.EnrollmentRequest;
 import com.tecsup.lms.enrollments.infrastructure.dto.EnrollmentResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,7 +37,10 @@ public class EnrollmentController {
 
         String enrollmentId = enrollmentCommandHandler.enrollStudent(command);
 
-        return ResponseEntity.ok(new EnrollmentResponse(enrollmentId));
+        return ResponseEntity.ok(EnrollmentResponse
+                                .builder()
+                                .enrollmentId(enrollmentId)
+                                .build());
     }
 
     @PostMapping("/{enrollmentId}/lessons/{lessonId}")
@@ -59,4 +64,40 @@ public class EnrollmentController {
         return ResponseEntity.ok().build();
     }
 
+    // ========================================
+    // SAGA
+    // ========================================
+
+    private final EnrollmentSagaHandler sagaHandler;
+
+    @PostMapping("/request")
+    public ResponseEntity<EnrollmentResponse> requestEnrollment(
+            @RequestBody EnrollmentRequest request) {
+
+        // Iniciar saga
+        String enrollmentId = this.sagaHandler.requestEnrollment(request.getStudentId(),
+                request.getStudentName(),
+                request.getCourseId(),
+                request.getAmount());
+
+        EnrollmentResponse response = EnrollmentResponse.builder()
+                                    .enrollmentId(enrollmentId)
+                                    .status("PENDING")
+                                    .message("Enrollment request is being processed")
+                                    .build();
+
+        return ResponseEntity
+                .status(HttpStatus.ACCEPTED)
+                .body(response);
+    }
+
+
 }
+
+
+
+
+
+
+
+

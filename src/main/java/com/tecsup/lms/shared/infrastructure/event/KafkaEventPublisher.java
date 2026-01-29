@@ -2,6 +2,7 @@ package com.tecsup.lms.shared.infrastructure.event;
 
 import com.tecsup.lms.courses.domain.event.CourseCreatedEvent;
 import com.tecsup.lms.courses.domain.event.CoursePublishedEvent;
+import com.tecsup.lms.enrollments.domain.event.EnrollmentRequestedEvent;
 import com.tecsup.lms.shared.domain.event.DomainEvent;
 import com.tecsup.lms.shared.infrastructure.config.KafkaConfig;
 import lombok.RequiredArgsConstructor;
@@ -46,6 +47,8 @@ public class KafkaEventPublisher {
         if ( event instanceof CourseCreatedEvent ||
                 event instanceof CoursePublishedEvent) {
             return KafkaConfig.COURSE_EVENTS_TOPIC;
+        } else if (event instanceof EnrollmentRequestedEvent) {
+            return KafkaConfig.ENROLLMENT_REQUEST_TOPIC;
         } else {
             throw new IllegalArgumentException("Unknown event type: " + event.getEventType());
         }
