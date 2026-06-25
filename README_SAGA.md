@@ -204,7 +204,7 @@ package com.tecsup.lms.enrollments.infrastructure.web;
 ## 4.- Adaptar el nuevo topic "enrollment-requests" en KafkaConfig.java
 
 Hacer las siguientes modificaciones en KafkaConfig.java:
-```.java
+```java
 
 package com.tecsup.lms.shared.infrastructure.config;
 
@@ -226,7 +226,7 @@ package com.tecsup.lms.shared.infrastructure.config;
 ## 5.- Adaptar en KafkaPublisher.java para enviar el evento EnrollmentRequestedEvent
 
 Adaptar el método publish para manejar el nuevo evento EnrollmentRequestedEvent
-``` .java
+```java
 package com.tecsup.lms.shared.infrastructure.event;
 
         private String getTopicFromEvent(DomainEvent event) {
@@ -259,7 +259,7 @@ GET http://localhost:8080/api/enrollments/request
 
 ## 1.- Definir el evento PaymentProcessedEvent.java
 
-``` .java
+```java
 
 package com.tecsup.lms.payment.domain.event;
 
@@ -292,7 +292,7 @@ public class PaymentProcessedEvent extends DomainEvent {
 
 ## 2.- Definir  PaymentSagaHandler.java
 
-``` .java
+```java
 
 
 import com.tecsup.lms.enrollments.domain.event.EnrollmentRequestedEvent;
@@ -379,7 +379,7 @@ public class PaymentSagaHandler {
 
 ## 3.- Modificar   KafkaConfig.java
 
-``` .java
+```java
 
 package com.tecsup.lms.shared.infrastructure.config;
 
@@ -461,7 +461,7 @@ public class KafkaConfig {
 
 ## 4.- Modificar   KafkaEventPublisher.java
 
-``` .java
+```java
 
 
 import com.tecsup.lms.courses.domain.event.CourseCreatedEvent;
@@ -541,7 +541,7 @@ GET http://localhost:8080/api/enrollments/request
 
 ## 1.- Modificar EnrollmentSagaHandler.java
 
-``` .java
+```java
 package com.tecsup.lms.enrollments.application.saga;
 
 import com.tecsup.lms.enrollments.domain.event.EnrollmentRequestedEvent;
@@ -631,7 +631,7 @@ GET http://localhost:8080/api/enrollments/request
 
 ## 1.- Crear PaymentFailedEvent.java 
 
-``` .java
+```java
 
 package com.tecsup.lms.payment.domain.event;
 
@@ -662,7 +662,7 @@ public class PaymentFailedEvent extends DomainEvent {
 
 ## 2.- Modificar PaymentSagaHandler.java ( Cuando el pago falla)
 
-``` .java
+```java
 package com.tecsup.lms.payment.application.saga;
 
 import com.tecsup.lms.enrollments.domain.event.EnrollmentRequestedEvent;
@@ -764,7 +764,7 @@ public class PaymentSagaHandler {
 ```
 ## 3.- Modificar KafkaConfig.java
 
-``` .java
+```java
 
 package com.tecsup.lms.shared.infrastructure.config;
 
@@ -857,7 +857,7 @@ public class KafkaConfig {
 
 ## 4.- Modificar KafkaEventPublisher.java
 
-``` .java
+```java
 
 package com.tecsup.lms.shared.infrastructure.event;
 
